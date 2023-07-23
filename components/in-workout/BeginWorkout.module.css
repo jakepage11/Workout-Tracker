@@ -1,0 +1,40 @@
+.background {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.contentContainer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 280px;
+}
+
+.typeHeader {
+  font-size: 3rem;
+  margin-top: 5vh;
+}
+
+.exList {
+  margin-top: 5vh;
+  font-size: 1.5rem;
+}
+
+.timeHeader {
+  margin-top: 10vh;
+  font-size: 2rem;
+  color: #CBC9FF;
+}
+
+.beginBtn {
+  position: absolute;
+  bottom: 5vh;
+  border-radius: 10px;
+  height: 5vh;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}

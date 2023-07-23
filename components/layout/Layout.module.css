@@ -1,0 +1,9 @@
+.entirepage {
+  position: relative;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}

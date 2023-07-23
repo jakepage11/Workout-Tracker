@@ -1,0 +1,73 @@
+
+.container {
+  background-color: #d9d9d9;
+  border-radius: 20px;
+  min-width: 190px;
+  min-height: 160px;
+  position: relative;
+  cursor: pointer;
+  display: grid;
+  grid-template-rows: 25% 25% 50%;
+}
+
+.container:hover {
+  scale: 1.1;
+}
+
+.infoDaysContainer {
+  margin-left: 1vw;
+  display: flex;
+  align-items: center;
+  gap: 1vw;
+}
+
+.infoIcon:hover {
+  scale: 1.2;
+}
+
+.typeDiffContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 2vw;
+  width: 80%;
+}
+
+.typeHeader {
+  font-size: 1.8rem;
+}
+
+.diffContainer {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.diffHeader {
+  font-size: 1.5rem;
+}
+
+.diffText {
+  display: flex;
+  align-items: baseline;
+}
+
+.timeContainer {
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  /* background-color: yellow; */
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.timeText {
+  font-size: 1.5rem;
+}
+
+.timeImg {
+  width: 20px;
+}
+

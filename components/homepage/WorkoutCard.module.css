@@ -1,0 +1,66 @@
+
+.card {
+  background-color: #FFBAB7;
+  border-radius: 20px;
+  min-width: 190px;
+  max-width: 190px;
+  min-height: 160px;
+  position: relative;
+  cursor: pointer;
+}
+.card:hover {
+  scale: 1.1;
+}
+
+.card > * {
+  margin-left: 100px;
+}
+
+.typeDateBox {
+  margin-top: 20px;
+  margin-left: 10px;
+  margin-right: 10px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.typeHeader {
+  font-weight: bold;
+  font-size: 1.7rem;
+}
+
+.dateHeader {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.card:hover {
+  scale: 1.1;
+}
+
+.exercises {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top:10px;
+  column-gap: 10px;
+  row-gap: 2px;
+  margin-left: 20px;
+}
+
+.exercises > h4 {
+  font-size: 1rem;
+}
+
+.type {
+  font-size: 2rem;
+}
+
+.icons {
+  color: black;
+}
+
+.bottomContainer {
+  /* ma */
+}
+

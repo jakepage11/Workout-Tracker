@@ -1,0 +1,46 @@
+
+
+.page {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 8fr 3fr;
+  height: auto;
+  width: 90%;
+}
+
+.content {
+  margin: 5vh;
+  height: 70vh;
+  width: 90%;
+  background-color: #E6E6E6;
+  border-radius: 20px;
+}
+
+.contentBody {
+  display: grid;
+  grid-template-columns: 3fr 5fr;
+}
+
+@media (orientation: portrait), (width: 500) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: auto;
+    align-items: center;
+  }
+
+  .contentBody {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content {
+    height: auto;
+  }
+
+}

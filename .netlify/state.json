@@ -1,0 +1,19 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Vancouver",
+			"country": {
+				"code": "US",
+				"name": "United States"
+			},
+			"subdivision": {
+				"code": "WA",
+				"name": "Washington"
+			},
+			"timezone": "America/Los_Angeles",
+			"latitude": 45.6435,
+			"longitude": -122.6247
+		},
+		"timestamp": 1690071444125
+	}
+}

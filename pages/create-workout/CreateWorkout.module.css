@@ -1,0 +1,49 @@
+
+
+.page {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 3fr 7fr;
+  height: auto;
+  width: 90%;
+}
+
+.testDiv {
+  background-color: black;
+  color: white;
+}
+
+.formContainer {
+  margin: 10px;
+  height: 100%;
+  width: 100%;
+}
+
+.contentBody {
+  display: grid;
+  grid-template-columns: 3fr 5fr;
+}
+
+@media (orientation: portrait), (width: 500) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: auto;
+    align-items: center;
+  }
+
+  .contentBody {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .content {
+    height: auto;
+  }
+
+}

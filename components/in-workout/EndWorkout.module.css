@@ -1,0 +1,62 @@
+.contentContainer {
+  display: grid;
+  grid-template-rows: 40% 20% 20% 5% 15%;
+  position: relative;
+  justify-items: center;
+  height: 100%;
+}
+
+.topContainer {
+  margin-top: 5vh;
+}
+
+.completeHeader {
+  color: #FFBAB7;
+  font-size: 3rem;
+}
+
+.exerciseListItem {
+  font-size: 1.1rem;
+}
+
+.exerciseList {
+  margin-top: 1vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.diffContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.diffValContainer {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.diffHeader {
+  font-size: 2rem;
+}
+
+.diffMax {
+  font-size: 1rem;
+}
+
+.diffValue {
+  font-size: 3rem;
+}
+
+.timeHeader {
+  color: #CBC9FF;
+  font-size: 2rem;
+}
+
+.timeValue {
+  font-size: 3rem;
+  color: #CBC9FF;
+}
+

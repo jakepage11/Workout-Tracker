@@ -1,0 +1,68 @@
+.overlay {
+  position: fixed;
+  background-color: rgba(0,0,0,0.5);
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0,
+
+}
+
+.container {
+  position: fixed;
+  background-color: orange; 
+  border-radius: 10px;
+  width: 40%;
+  height: 40%;
+  z-index: 1000;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Poppins';
+}
+
+.form {
+  margin-top: 1vh;
+  display: flex;
+  gap: 2vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.form > h3 {
+  
+}
+
+.submitBtn {
+  color: white;
+  background-color: black;
+  border-radius: 10px;
+  width: 30%;
+  height: 6vh;
+  font-size: 1.25rem;
+  margin-top: 1vh;
+  cursor: pointer;
+}
+
+.name {
+  position: relative;
+  width: 60%;
+  height: 5vh;
+  border-radius: 10px;
+  border: none;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.otherInputs {
+  position: relative;
+  width: 80%;
+  height: 4vh;
+  border-radius: 5px;
+  border: none;
+  font-size: 1rem;
+}

@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.formExName {
+  margin-top: 2vh;
+  text-align: center;
+  height: 5vh;
+  width: 90%;
+  font-size: 1.5rem;
+  background-color: transparent;
+  backface-visibility: 100%;
+  border-radius: 5px;
+  border: none;
+}
+
+.dropdown {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: white;
+  text-align: center;
+  width: 90%;
+  top: 100%;
+}
+
+.exOption {
+  cursor: pointer;
+}

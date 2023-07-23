@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap');
+.container {
+  background-color: #770CFF;
+  font-family: 'Poppins', sans-serif;
+  min-width: 25rem;
+  max-width: 15rem;
+  border-radius: 25px;
+  min-height: 10rem;
+  max-height: 10rem;
+  margin: 2rem;
+  overflow: auto;
+}
+
+.content {
+  color: white;
+  height: auto;
+  margin: 1rem;
+  display: grid;
+  grid-template-rows: 2fr 5fr 1fr;
+  grid-template-columns: 100%;
+}

@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.searchContainer {
+  display: flex;
+  min-width: 20vw;
+  max-width: 90%;
+  height: 6vh;
+  border: 1px solid black;
+  border-radius: 10px;
+  background-color: white;
+  align-items: center;
+  overflow: hidden;
+  justify-content: left;
+
+}
+
+.inputBar {
+  margin-left: 0.5vw;
+  margin-right: 1vw;
+  width: auto;
+  height: 5vh;
+  font-size: 1rem;
+  border: none;
+}
+
+.inputBar:focus {
+  outline: none;
+}
+
+.searchIcon {
+  object-fit: cover;
+  margin-left: .5vw;
+}

@@ -1,0 +1,44 @@
+
+[
+  {
+    "name": "BB Benchpress",
+    "muscles": ["pecs", "tris", "delts"],
+    "tags": ["upper body", "push"],
+    "level": 1,
+    "link": "https://youtu.be/4Y2ZdHCOXok",
+    "equipment": ["bench", "barbell", "plates"],
+    "popularity": 0.9,
+    "people-req": 1,
+    "description": "The barbell bench press is a compound exercise performed by lying on a bench and lifting a weighted barbell from chest level to full arm extension, primarily targeting the chest, shoulders, and triceps while engaging various other stabilizing muscles throughout the body. -ChatGPT"
+  }, {
+    "name": "BB Squat",
+    "muscles": ["quads", "hams", "glutes", "calfes", "low-back"],
+		"tags": ["lower body", "legs"],
+    "level": 1,
+    "link": "",
+    "equipment": ["squat rack", "barbell", "plates"],
+    "popularity": 0.9,
+		"people-req": 1,
+    "description": "The barbell back squat is a compound exercise performed in the weightlifting and strength training world, involving placing a barbell across the upper back and shoulders while squatting down to a desired depth and then returning to a standing position, targeting the muscles of the lower body, including the quadriceps, hamstrings, and glutes. It is a fundamental movement for building lower body strength, developing overall muscle mass, and enhancing athletic performance."
+  }, {
+    "name":"Pederson Step-Ups",
+    "muscles": ["quads", "VMO", "soleus"],
+		"tags": ["lower body", "legs", "ATG", "vertical"],
+    "level": 2,
+    "link": "",
+    "equipment": ["dumbells", "elevated platform"],
+    "popularity": 0.5,
+		"people-req": 1,
+    "description": "Popularized by ATG's Ben Patrick, Pederson step-ups provide a way to train vertical through a partial single leg squat with knees over toes. Works ankle stability and force through the ankle as the exercise requires lifting the heel and pushing through the ball of your foot"
+  }, {
+    "name": "Hang Cleans",
+    "muscles": ["quads", "hams", "traps", "low-back", "biceps"],
+		"tags": ["lower body", "power", "upper body", "strength"],
+    "level": 2,
+    "link": "",
+    "equipment": ["barbell", "plates", "power rack[opt]"],
+    "popularity": 0.7,
+		"people-req": 1,
+    "description": "A full body compound lift that focuses on moving weight quickly. Hang cleans are cleans performed starting from the bottom of knee which requires more force through a shorter range of motion in order to get the weight up. Great for explosiveness training!"
+  }
+  ]
