@@ -29,10 +29,10 @@ export default function NavBar() {
               </Link>
               
             </div>
-            {user === null && <button className="style-btn" onClick={login}>
+            {!user && <button className="style-btn" onClick={login}>
                 Login/Sign-up
             </button>}
-            {user !== null && <button className="style-btn" onClick={logout}>
+            {user && <button className="style-btn" onClick={logout}>
                 Logout
             </button>}
           </div>

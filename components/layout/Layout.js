@@ -4,7 +4,6 @@ import { AuthContextProvider } from "@/stores/authContext";
 
 export default function Layout(props) {
   return (
-    <AuthContextProvider>
       <div className={classes.entirepage}>
         <div className={classes.navbar}>
           <NavBar/>
@@ -12,7 +11,5 @@ export default function Layout(props) {
         
         <main>{props.children}</main>
       </div>
-    </AuthContextProvider>
-    
   )
 }

@@ -11,13 +11,13 @@ export default function ExerciseDisplay({handleClick, handleDelete, handleInfo,
       onClick={handleClick}
       >
       <div className={classes.infoName}>
-        <Info style={{"font-size": "15px"}}/>
-        <h2 style={{"font-size": "18px"}}>{exname}</h2>
-        <i><p style={{"font-size": "10px"}}>({numsets} sets)</p></i>
+        <Info style={{"fontSize": "15px"}}/>
+        <h2 style={{"fontSize": "18px"}}>{exname}</h2>
+        <i><p style={{"fontSize": "10px"}}>({numsets} sets)</p></i>
       </div>
       <div className={classes.attributesDiv}>
         <div className={classes.singleAttribute}>
-          <Sell style={{"font-size": "10px"}}/>
+          <Sell style={{"fontSize": "10px"}}/>
           {tags}
         </div>
         {/* muscles */}

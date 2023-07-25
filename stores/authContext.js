@@ -13,38 +13,43 @@ const AuthContext = createContext({
 export const AuthContextProvider = ({children}) => {
   // store login state and pass down to all other components
   const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(false)
 
   const login = () => {
     netlifyIdentity.open();
-    console.log("logging in")
   }
-
   const logout = () => {
     netlifyIdentity.logout();
-    console.log("logging out")
   }
 
   // establish connection to netlify
   useEffect(() => {
-    netlifyIdentity.init();
-
     netlifyIdentity.on("login", (user) => {
-      login();
       setUser(user);
+      netlifyIdentity.close();
+      console.log("login event")
     });
 
     netlifyIdentity.on("logout", () => {
       setUser(null);
+      console.log("logout event")
     })
 
+    netlifyIdentity.on('init', (user) => {
+      setUser(user)
+      setAuthReady(true)
+      console.log("init event")
+    })
+
+    netlifyIdentity.init();
+
     return () => {
-      logout();
       netlifyIdentity.off("login")
       netlifyIdentity.off("logout")
     }
   }, [])
 
-  const context = {user, login, logout}
+  const context = {user, login, logout, authReady}
   return (
     <AuthContext.Provider value={context}>
       {children}

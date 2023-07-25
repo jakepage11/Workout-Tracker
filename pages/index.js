@@ -2,7 +2,7 @@ import WorkoutCard from "@/components/homepage/WorkoutCard"
 import classes from "../styles/homepage.module.css"
 import clientPromise from "@/lib/mongodb"
 import * as dayjs from 'dayjs';
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router"
 import {nanoid} from "nanoid"
 import ViewWorkout from "@/components/homepage/ViewWorkout"
@@ -10,12 +10,14 @@ import TodayWorkoutCard from "@/components/homepage/TodayWorkoutCard"
 import PastWorkoutCard from "@/components/homepage/PastWorkoutCard"
 import { ObjectId } from "mongodb"
 import { CheckCircle } from "@mui/icons-material";
+import AuthContext from "@/stores/authContext";
 
 export default function HomePage({workouts, workoutsPast, todayInProgress}) {
   // Global variables
   const router = useRouter();
   const utc = require('dayjs/plugin/utc');
   dayjs.extend(utc);
+  const {user, authReady } = useContext(AuthContext)
   // State
   const [showWorkout, setShowWorkout] = useState(() => {return false});
   const [currWorkout, setCurrWorkout] = useState(() => {return {}});
@@ -27,6 +29,16 @@ export default function HomePage({workouts, workoutsPast, todayInProgress}) {
       return workouts.length > 0 && 
               date1 === date2
   });
+
+  useEffect(() => {
+    if (authReady) {
+      fetch('./.netlify/functions/futureworkouts', user && {
+          headers: {
+            Authorization: `Bearer ${user.token.access_token}`
+          }
+        }).then(res => res.json()).then(data => console.log(JSON.stringify(data)));
+      }    
+  }, [user])
 
   // Show a modal of a given workout which includes exercises
   // with weight, reps.
@@ -147,8 +159,8 @@ export async function getServerSideProps() {
   const startTodayUTC = dayjs().startOf('day').utc("true")
   const endTodayUTC = dayjs().endOf('day').utc("true")
   const endWeek = endTodayUTC.add(1, 'week')
-  console.log(startTodayUTC.$d)
-  console.log(endTodayUTC.$d)
+  // console.log(startTodayUTC.$d)
+  // console.log(endTodayUTC.$d)
 
   // Grab all upcoming workouts in the next 1 week
   const data = await mongoClient.db().collection('workout-testing')
@@ -175,7 +187,7 @@ export async function getServerSideProps() {
     }
   }
 
-  console.log(JSON.parse(JSON.stringify(data)))
+  // console.log(JSON.parse(JSON.stringify(data)))
     
   return {
     props: {
