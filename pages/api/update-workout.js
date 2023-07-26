@@ -11,7 +11,7 @@ export default async function handler(req, res) {
      const utcDate = new Date(Date.UTC(dateObj.year(), dateObj.month(), 
                                     dateObj.date(), dateObj.hour(), 
                                     dateObj.minute(), dateObj.second()))
-     const result = await mongoClient.db().collection("workout-testing")
+     const result = await mongoClient.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_WORKOUTS)
         .findOneAndUpdate({"_id": new ObjectId(id)},
           {$set: {
             exercises: data.exercises,

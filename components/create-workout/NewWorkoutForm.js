@@ -16,7 +16,6 @@ export default function NewWorkoutForm({workout, handleSubmit, workoutTypes, all
   const [currWorkout, setCurrWorkout] = useState(() => {
     if (workout === undefined) {  // we're creating a workout
       return {
-        user: "",
         exercises: [
           {
             id: nanoid(),

@@ -5,24 +5,32 @@ import clientPromise from "@/lib/mongodb";
 import ExSearch from "@/components/create-workout/ExSearch";
 import Calendar from "react-calendar";
 import { useRouter } from "next/router";
+import { useContext } from "react";
+import AuthContext from "@/stores/authContext";
 
 export default function CreateWorkoutPage(props) {
   const router = useRouter();
+  const {user, login} = useContext(AuthContext)
 
   // Sends the particular workout data to the db
   async function handleSubmit(workout) {
+    if (user) { // only create workout for 
+      const res = await fetch("/api/create-workout", {
+        method: 'POST',
+        body: JSON.stringify({
+          ...workout,
+          user: user.email
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
-    console.log({workout})
-    const res = await fetch("/api/create-workout", {
-      method: 'POST',
-      body: JSON.stringify({...workout}),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    const data = await res.json();
-    router.push("/");
+      const data = await res.json();
+      router.push("/");
+    } else {
+      login();
+    }
   }
  
   return (

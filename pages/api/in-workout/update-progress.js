@@ -12,19 +12,18 @@ export default async function handler(req, res) {
      let result;
 
      if (index === undefined) { // update progress
-      result = await mongoClient.db().collection("in-workout-testing")
+      result = await mongoClient.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_INWORKOUT)
                             .updateOne({"_id": new ObjectId(id)}, {
                               $set: {
                                 progress: data.progress
                               }
                             });
      } else {  // update feedback
-      result = await mongoClient.db().collection("in-workout-testing")
+      result = await mongoClient.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_INWORKOUT)
                               .updateOne({"_id": new ObjectId(id)}, 
                               {$set: {[`exercises.${index}.difficulty`]: rating}});
      }
 
      res.status(201).json('Workout updated :)');
-    //  console.log("progress updated")
   }
 }

@@ -7,7 +7,7 @@ export default async function handler(req, res) {
      const data = req.body;
      const id = data._id;
      
-     const result = await mongoClient.db().collection("workout-testing")
+     const result = await mongoClient.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_WORKOUTS)
           .findOneAndUpdate({"_id": new ObjectId(id)},
             {$set: {
               exercises: data.exercises, // added feedback
@@ -15,7 +15,7 @@ export default async function handler(req, res) {
               difficulty: data.difficulty
           }});
     // Delete workout from the in-workout database
-    const result2 = await mongoClient.db().collection('in-workout-testing')
+    const result2 = await mongoClient.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_INWORKOUT)
                   .findOneAndDelete({'_id': new ObjectId(id)})
      res.status(201).json('Workout completed :)');
   }

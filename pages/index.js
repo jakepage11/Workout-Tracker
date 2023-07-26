@@ -8,11 +8,11 @@ import {nanoid} from "nanoid"
 import ViewWorkout from "@/components/homepage/ViewWorkout"
 import TodayWorkoutCard from "@/components/homepage/TodayWorkoutCard"
 import PastWorkoutCard from "@/components/homepage/PastWorkoutCard"
-import { ObjectId } from "mongodb"
 import { CheckCircle } from "@mui/icons-material";
 import AuthContext from "@/stores/authContext";
 
-export default function HomePage({workouts, workoutsPast, todayInProgress}) {
+export default function HomePage({ workoutsPast, todayInProgress}) {
+  
   // Global variables
   const router = useRouter();
   const utc = require('dayjs/plugin/utc');
@@ -21,24 +21,34 @@ export default function HomePage({workouts, workoutsPast, todayInProgress}) {
   // State
   const [showWorkout, setShowWorkout] = useState(() => {return false});
   const [currWorkout, setCurrWorkout] = useState(() => {return {}});
-  const [workoutToday, setWorkoutToday] = useState(() => {
-    if (workouts.length === 0) return false;
+  const [workoutToday, setWorkoutToday] = useState(false)
+  const [workouts, setWorkouts] = useState([])
 
-    const date1 = dayjs.utc(workouts[0].date).format('YYYY-MM-DD');
-    const date2 = dayjs().format('YYYY-MM-DD');
-      return workouts.length > 0 && 
-              date1 === date2
-  });
-
+  // TODO: Grab all upcoming workouts
   useEffect(() => {
     if (authReady) {
+      let plannedWorkouts
       fetch('./.netlify/functions/futureworkouts', user && {
           headers: {
             Authorization: `Bearer ${user.token.access_token}`
           }
-        }).then(res => res.json()).then(data => console.log(JSON.stringify(data)));
-      }    
-  }, [user])
+        }).then(res => res.json()).then(data => {
+          console.log(data)
+          plannedWorkouts = JSON.parse(JSON.stringify(data));
+          // Find if there's a workout today to display
+          if (plannedWorkouts.length === 0) {
+            setWorkoutToday(false)
+          } else {
+            const date1 = dayjs.utc(data[0].date).format('YYYY-MM-DD');
+            const date2 = dayjs().format('YYYY-MM-DD');
+            setWorkoutToday( workouts.length > 0 && date1 === date2 )   
+          }
+          setWorkouts(plannedWorkouts)
+        })
+      } 
+  }, [user, authReady])
+  console.log(workouts)
+  console.log(workoutToday)
 
   // Show a modal of a given workout which includes exercises
   // with weight, reps.
@@ -87,7 +97,7 @@ export default function HomePage({workouts, workoutsPast, todayInProgress}) {
         <div className={classes.nextWorkoutContainer}>
           {workoutToday && 
             <div>
-              <div style={{"display": "flex", 'align-items': "center", 'gap': "10px"}}>
+              <div style={{"display": "flex", 'alignItems': "center", 'gap': "10px"}}>
                 {/* if workout has already been completed */}
                 
                 <h1 className={classes.headers}>
@@ -159,12 +169,6 @@ export async function getServerSideProps() {
   const startTodayUTC = dayjs().startOf('day').utc("true")
   const endTodayUTC = dayjs().endOf('day').utc("true")
   const endWeek = endTodayUTC.add(1, 'week')
-  // console.log(startTodayUTC.$d)
-  // console.log(endTodayUTC.$d)
-
-  // Grab all upcoming workouts in the next 1 week
-  const data = await mongoClient.db().collection('workout-testing')
-              .find({date: {$gte: startTodayUTC.$d, $lt: endWeek.$d}, completeIn: ""}).sort({date: 1}).toArray();
        
   // Grab workouts in the last 2 weeks
   const pastStartDay = startTodayUTC.subtract(2, "week");
@@ -176,23 +180,18 @@ export async function getServerSideProps() {
  
   let inProgressWorkout = null;
   // Check if there is a planned workout and if it is today
-  if (data.length > 0) {
-    const firstWorkoutDate = dayjs.utc(JSON.parse(JSON.stringify(data))[0].date)
-    // console.log({firstWorkoutDate})
-    // console.log({todayDateLocal})
-    if (todayDateLocal === firstWorkoutDate) {
-      const wid = new ObjectId(JSON.parse(JSON.stringify(data))[0]._id)
-      inProgressWorkout = await mongoClient.db().collection('in-workout-testing')
-                            .findOne({_id: wid});
-    }
-  }
-
-  // console.log(JSON.parse(JSON.stringify(data)))
+  // if (data.length > 0) {
+  //   const firstWorkoutDate = dayjs.utc(JSON.parse(JSON.stringify(data))[0].date)
+  //   if (todayDateLocal === firstWorkoutDate) {
+  //     const wid = new ObjectId(JSON.parse(JSON.stringify(data))[0]._id)
+  //     inProgressWorkout = await mongoClient.db().collection('in-workout-testing')
+  //                           .findOne({_id: wid});
+  //   }
+  // }
     
   return {
     props: {
       todayInProgress: JSON.parse(JSON.stringify(inProgressWorkout)),
-      workouts: JSON.parse(JSON.stringify(data)),
       workoutsPast: JSON.parse(JSON.stringify(pastData))
     }
   }

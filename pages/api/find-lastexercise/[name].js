@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   const { name } = req.query;
   console.log(name);
 
-  const data = await mongoClient.db().collection('workout-testing')
+  const data = await mongoClient.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_WORKOUTS)
               .findOne({completeIn: {$ne: ""}, "exercises.$.name": name});
   console.log({data});
   res.status(201).json('Found last exercise');
