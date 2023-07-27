@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+'use client'
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import classes from './NewWorkoutForm.module.css';
 import {nanoid} from "nanoid"
 import { MoreVert, Close } from '@mui/icons-material';
@@ -6,12 +7,16 @@ import CreateSets from './CreateSets';
 import dayjs from 'dayjs';
 import ExerciseDisplay from './ExerciseDisplay';
 import { jsx } from '@emotion/react';
+import AuthContext from '@/stores/authContext';
+import { useRouter } from 'next/navigation';
 
 // Component used to edit and create new workouts. Takes in list of exercises, the workout (if
 // we're editing one, will be null otherwise), a function to submit the workout, and the types of workouts.
-export default function NewWorkoutForm({workout, handleSubmit, workoutTypes, allExercises}) {
+export default function NewWorkoutForm({workout, workoutTypes, allExercises}) {
   const utc = require('dayjs/plugin/utc');
   dayjs.extend(utc);
+  const {login, logout, user, authReady} = useContext(AuthContext)
+  const router = useRouter()
   
   const [currWorkout, setCurrWorkout] = useState(() => {
     if (workout === undefined) {  // we're creating a workout
@@ -77,6 +82,26 @@ export default function NewWorkoutForm({workout, handleSubmit, workoutTypes, all
     }
   }, [currWorkout])
 
+  // Sends the particular workout data to the db
+  async function handleSubmit(workout) {
+    if (user) { // only create workout for 
+      const res = await fetch("/api/create-workout", {
+        method: 'POST',
+        body: JSON.stringify({
+          ...workout,
+          user: user.email
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await res.json();
+      router.push("/");
+    } else {
+      login();
+    }
+  }
 
   // Adds an exercise to the current workout plan
   function addExercise(exname) {
@@ -177,14 +202,14 @@ export default function NewWorkoutForm({workout, handleSubmit, workoutTypes, all
 
   // Submits all non-empty exercise data to a server
   // where the info is stored.
-  function handleSubmitLocal(e) {
+  async function handleSubmitLocal(e) {
     e.preventDefault();
     e.stopPropagation();
     // Clear the session Storage after submitting.
     window.sessionStorage.removeItem("workoutData");
     console.log("submitting")
     // Call the function given with props
-    handleSubmit(currWorkout);
+    await handleSubmit(currWorkout);
   }
 
   // Prevents the auto submit from occuring 

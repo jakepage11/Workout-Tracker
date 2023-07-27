@@ -1,3 +1,4 @@
+'use client'
 import classes from "./NavBar.module.css"
 import Link from "next/link"
 import ndaLogo from "../../public/logos/NDA_logo.svg"
@@ -30,7 +31,7 @@ export default function NavBar() {
               
             </div>
             {!user && <button className="style-btn" onClick={login}>
-                Login/Sign-up
+                Login
             </button>}
             {user && <button className="style-btn" onClick={logout}>
                 Logout

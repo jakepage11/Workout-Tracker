@@ -1,4 +1,4 @@
-
+'use client'
 // This page lets the user discover, search, and even add to a bank
 
 import SearchBar from "@/components/create-workout/SearchBar";

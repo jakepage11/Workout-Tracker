@@ -1,6 +1,7 @@
+
 import WorkoutCard from "@/components/homepage/WorkoutCard"
 import classes from "../styles/homepage.module.css"
-import clientPromise from "@/lib/mongodb"
+// import clientPromise from "@/lib/mongodb"
 import * as dayjs from 'dayjs';
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router"
@@ -11,7 +12,7 @@ import PastWorkoutCard from "@/components/homepage/PastWorkoutCard"
 import { CheckCircle } from "@mui/icons-material";
 import AuthContext from "@/stores/authContext";
 
-export default function HomePage({ workoutsPast, todayInProgress}) {
+export default function HomePage() {
   
   // Global variables
   const router = useRouter();
@@ -23,32 +24,61 @@ export default function HomePage({ workoutsPast, todayInProgress}) {
   const [currWorkout, setCurrWorkout] = useState(() => {return {}});
   const [workoutToday, setWorkoutToday] = useState(false)
   const [workouts, setWorkouts] = useState([])
+  const [pastWorkouts, setPastWorkouts] = useState([])
+  const [progressWorkout, setProgressWorkout] = useState()
 
-  // TODO: Grab all upcoming workouts
+  // Grab all upcoming workouts
   useEffect(() => {
     if (authReady) {
       let plannedWorkouts
+      console.log(user)
       fetch('./.netlify/functions/futureworkouts', user && {
           headers: {
             Authorization: `Bearer ${user.token.access_token}`
           }
         }).then(res => res.json()).then(data => {
-          console.log(data)
-          plannedWorkouts = JSON.parse(JSON.stringify(data));
-          // Find if there's a workout today to display
-          if (plannedWorkouts.length === 0) {
-            setWorkoutToday(false)
-          } else {
-            const date1 = dayjs.utc(data[0].date).format('YYYY-MM-DD');
-            const date2 = dayjs().format('YYYY-MM-DD');
-            setWorkoutToday( workouts.length > 0 && date1 === date2 )   
+          if (user) {
+            console.log(data)
+            plannedWorkouts = JSON.parse(JSON.stringify(data));
+            // Find if there's a workout today to display
+            if (plannedWorkouts.length === 0) {
+              setWorkoutToday(false)
+            } else {
+              const date1 = dayjs.utc(plannedWorkouts[0].date).format('YYYY-MM-DD');
+              const date2 = dayjs().format('YYYY-MM-DD');
+              console.log(date1)
+              console.log(date2)
+              const isToday = workouts.length > 0 && date1 === date2
+              setWorkoutToday(isToday) 
+              // if workout is in progress grab in-workout version
+              // if (isToday) {
+              //   const mongoClient = await clientPromise
+              //   const workout = await mongoClient.db(MONGODB_DATABASE).collection(MONGO_COLLECTION_INWORKOUT).findOne({_id: wid});
+              //   setProgressWorkout(workout)
+              // } 
+            }
+            setWorkouts(plannedWorkouts)
           }
-          setWorkouts(plannedWorkouts)
         })
       } 
   }, [user, authReady])
   console.log(workouts)
   console.log(workoutToday)
+
+  // TODO: Grab past workouts
+  useEffect(() => {
+    if (authReady) {
+      fetch('./.netlify/functions/pastworkouts', user && {
+        headers: {
+          Authorization: `Bearer ${user.token.access_token}`
+        }
+      }).then(res => res.json()).then(data => {
+        console.log(data)
+        const past = JSON.parse(JSON.stringify(data));
+        // setPastWorkouts(past)
+      })
+    } 
+  }, [user, authReady])
 
   // Show a modal of a given workout which includes exercises
   // with weight, reps.
@@ -74,9 +104,9 @@ export default function HomePage({ workoutsPast, todayInProgress}) {
   const nextWorkouts = workoutsToMap.map((w, index) => {
     return <WorkoutCard key={nanoid()} workout={w} handlePreview={() => previewWorkout(index)}/>
   });
-
+  console.log({pastWorkouts})
   // Map each previous workout to a PastWorkoutCard
-  const pastWorkouts = workoutsPast.map((w, index) => {
+  const pastCards = pastWorkouts.map((w, index) => {
     return <PastWorkoutCard key={`past-workout-${index}`} workout={w}/>
   })
   
@@ -146,7 +176,7 @@ export default function HomePage({ workoutsPast, todayInProgress}) {
             Past Workouts
           </h1>
           <div className={classes.pastWorkoutsContainer}>
-            {pastWorkouts}
+            {pastCards}
           </div>
         </div>
         {showWorkout && 
@@ -158,27 +188,8 @@ export default function HomePage({ workoutsPast, todayInProgress}) {
   )
 }
 
-export async function getServerSideProps() {
-  const utc = require('dayjs/plugin/utc');
-  dayjs.extend(utc);
-  // Receive all workouts from the DB in the form of an array
-  const mongoClient = await clientPromise;
-  // Get today's date
-  // TODO: Fix the date logic
-
-  const startTodayUTC = dayjs().startOf('day').utc("true")
-  const endTodayUTC = dayjs().endOf('day').utc("true")
-  const endWeek = endTodayUTC.add(1, 'week')
-       
-  // Grab workouts in the last 2 weeks
-  const pastStartDay = startTodayUTC.subtract(2, "week");
-  const pastData = await mongoClient.db().collection('workout-testing')
-                      .find({date: {$gte: pastStartDay.$d, $lte: endTodayUTC.$d}, completeIn: {$ne: ""}}).sort({date: -1}).toArray();
-
-  // Grab today's workout from the in-progress db 
-  const todayDateLocal = new Date().toLocaleDateString();
+// export async function getServerSideProps() {
  
-  let inProgressWorkout = null;
   // Check if there is a planned workout and if it is today
   // if (data.length > 0) {
   //   const firstWorkoutDate = dayjs.utc(JSON.parse(JSON.stringify(data))[0].date)
@@ -188,11 +199,5 @@ export async function getServerSideProps() {
   //                           .findOne({_id: wid});
   //   }
   // }
-    
-  return {
-    props: {
-      todayInProgress: JSON.parse(JSON.stringify(inProgressWorkout)),
-      workoutsPast: JSON.parse(JSON.stringify(pastData))
-    }
-  }
-}
+
+// }
