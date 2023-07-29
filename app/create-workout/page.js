@@ -6,17 +6,16 @@ import clientPromise from "@/lib/mongodb";
 
 export default async function CreateWorkoutPage() {
   const mongoClient = await clientPromise;
-  // Grab all distinct exercise names
-  const exercises = await mongoClient.db().
-            collection(process.env.MONGODB_COLLECTION_EXERCISES).find({}, {projection:{_id:0}}).toArray();
-  const exerciseList = JSON.parse(JSON.stringify(exercises))
-  // console.log(JSON.parse(JSON.stringify(exercises)));
   // Get all the possible workoutTypes
-  const workoutTypes = await mongoClient.db().collection(process.env.MONGODB_COLLECTION_TYPES)
+  const workoutTypes = await mongoClient.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_TYPES)
         .find({}, {projection: {_id: 0}}).toArray();
-  console.log({exerciseList})
-  console.log({workoutTypes})
   const types = JSON.parse(JSON.stringify(workoutTypes))[0].types;
+
+  // TODO: make this into an api route instead once I figure out the server component fetch thingy
+  const exercises = await mongoClient.db(process.env.MONGODB_DATABASE).
+            collection(String(process.env.MONGODB_COLLECTION_EXERCISES))
+            .find({}, {projection:{_id:0}}).toArray()
+  const exerciseList = JSON.parse(JSON.stringify(exercises))
 
   return (
     <div className={classes.page}>
@@ -36,14 +35,4 @@ export default async function CreateWorkoutPage() {
     
     
   )
-}
-
-async function getStaticProps() {
-  
-
-  return {
-    exerciseList: JSON.parse(JSON.stringify(exercises)),
-    workoutTypes: types
-  }
-
 }

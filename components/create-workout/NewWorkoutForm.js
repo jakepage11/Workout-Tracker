@@ -6,7 +6,6 @@ import { MoreVert, Close } from '@mui/icons-material';
 import CreateSets from './CreateSets';
 import dayjs from 'dayjs';
 import ExerciseDisplay from './ExerciseDisplay';
-import { jsx } from '@emotion/react';
 import AuthContext from '@/stores/authContext';
 import { useRouter } from 'next/navigation';
 
@@ -84,13 +83,13 @@ export default function NewWorkoutForm({workout, workoutTypes, allExercises}) {
 
   // Sends the particular workout data to the db
   async function handleSubmit(workout) {
+    
     if (user) { // only create workout for 
+      const fullWorkout = {...workout, user: user.email}
+      console.log({fullWorkout})
       const res = await fetch("/api/create-workout", {
         method: 'POST',
-        body: JSON.stringify({
-          ...workout,
-          user: user.email
-        }),
+        body: JSON.stringify(fullWorkout),
         headers: {
           'Content-Type': 'application/json'
         }

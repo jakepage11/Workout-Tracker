@@ -1,17 +1,19 @@
+'use client'
 import { createPortal } from "react-dom"
 import classes from "./ViewWorkout.module.css"
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import {nanoid} from "nanoid"
-import {useRef, useState} from "react"
-import { useRouter } from "next/router";
+import {useEffect, useState} from "react"
+import { useRouter } from "next/navigation";
 import dayjs from "dayjs"
 
 export default function ViewWorkout({workoutProp, handleClose}) {
   const [workout, setWorkout] = useState(() => {
     return JSON.parse(JSON.stringify(workoutProp));
   });
+  const [mounted, setMounted] = useState(false)
 
   const [showSets, setShowSets] = useState(() => {
     let setsArr = [];
@@ -20,6 +22,10 @@ export default function ViewWorkout({workoutProp, handleClose}) {
     }
     return setsArr;
   })
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const router = useRouter();
 
@@ -76,7 +82,7 @@ export default function ViewWorkout({workoutProp, handleClose}) {
   dayjs.extend(utc);
   const date = dayjs.utc(workoutProp.date).format('M-DD') 
 
-  return createPortal (
+  return mounted ? createPortal (
     <> 
       <div className={classes.overlay}> </div>
       <div className={classes.container}>
@@ -93,5 +99,5 @@ export default function ViewWorkout({workoutProp, handleClose}) {
       
     </>, 
     document.getElementById("portal-root")
-  )
+  ) : null
 }
