@@ -1,17 +1,35 @@
+'use client'
 import BeginWorkout from "@/components/in-workout/BeginWorkout"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useContext } from "react"
 import { ObjectId } from "mongodb"
 import clientPromise from "@/lib/mongodb"
 import InExSet from "@/components/in-workout/InExSet"
 import classes from "./InWorkout.module.css"
 import CompletedEx from "@/components/in-workout/CompletedEx"
 import EndWorkout from "@/components/in-workout/EndWorkout"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
+import { Exercise, PlannedEx } from "@/types"
+import AuthContext from "@/stores/authContext"
 
 // TODO: workout should be the in-workout version and the regular version.
-export default function InWorkoutPage({workout, exDescrs}) {
+export default function InWorkoutContent({params: {id}}) {
   const router = useRouter();
+  const {user, authReady} = useContext(AuthContext)
+  // TODO: Fetch the users workout through the netlify function
+  const [workout, setWorkout] = useState({})
+  useEffect(() => {
+    if (authReady) {
+      fetch(`/.netlify/functions/inworkout/id=${id}`, user && 
+        headers: {
+          Authorization: `Bearer ${user.token.access_token}`,
+          'Content-Type': 'application/json'
+        }
+      ).then(res => res.json())
+            .then(data => setWorkout(data))
+    }
+  }, [])
 
+  console.log(workout)
   // Current exercise index
   const [currEx, setCurrEx] = useState(() => {
     if (workout.progress === undefined) {
@@ -317,40 +335,35 @@ export default function InWorkoutPage({workout, exDescrs}) {
 
 }
 
-export async function getServerSideProps(context) {
-  const { query } = context;
-  const wid = query.workoutId;
-  const mongoClient = await clientPromise;
-  // Grab exercises that are included in this workout for descriptions, videos, etc.
+// async function getServerSideProps(id: string) {
   
-  // Check if workout is in progress (is it in in-workout-testing collection)
-  const inWorkoutData = await mongoClient.db().collection('in-workout-testing')
-                            .findOne({"_id": new ObjectId(wid)});
+//   const mongoClient = await clientPromise;
+//   // Grab exercises that are included in this workout for descriptions, videos, etc.
+  
+//   // Check if workout is in progress (is it in in-workout-testing collection)
+//   const inWorkoutData = await mongoClient.db().collection('in-workout-testing')
+//                             .findOne({"_id": new ObjectId(id)});
 
-  // Get workout that matches id from the URL
-  const workoutData = await mongoClient.db().collection('workout-testing')
-                            .findOne({"_id": new ObjectId(wid)});
-  const workoutStr = JSON.parse(JSON.stringify(workoutData));
-  const inWorkoutStr = JSON.parse(JSON.stringify(inWorkoutData));
+//   // Get workout that matches id from the URL
+//   const workoutData = await mongoClient.db(process.env.MONGODB_DATABASE)
+//                             .collection(String(process.env.MONGODB_COLLECTION_WORKOUTS))
+//                             .findOne({"_id": new ObjectId(id)});
+  
+//   // Grab the in-workout version
 
-  // Grab exercise descriptions
-  const exnames = workoutStr.exercises.map((ex) => {
-    return ex.name
-  })
-  const exercises = await mongoClient.db().collection('exercises-testing')
-            .find({name: {$in: exnames}}).project({name: 1, description: 1, _id: 0}).toArray();
-  const exStrArr = JSON.parse(JSON.stringify(exercises))
-  // Map ex name to description
-  let descrDict = {}
-  exStrArr.forEach((ex) => {
-    descrDict[ex.name] = ex.description;
-  })
-  console.log({descrDict})
-  return {
-    props: {
-      // Return the in-progress workout or the regular
-      workout: inWorkoutStr === null ? workoutStr : inWorkoutStr,
-      exDescrs: descrDict
-    }
-  }
-}
+
+
+
+
+//   // Map ex name to description
+//   let descrDict: {[key: string]: string} = {}
+//   exStrArr.forEach((ex: Exercise) => {
+//     descrDict[ex.name] = ex.description;
+//   })
+  
+//   return {
+//       // Return the in-progress workout or the regular
+//       workout: inWorkoutStr === null ? workoutStr : inWorkoutStr,
+//       exDescrs: descrDict
+//   }
+// }
