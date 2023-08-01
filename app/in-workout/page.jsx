@@ -1,58 +1,69 @@
 'use client'
 import BeginWorkout from "@/components/in-workout/BeginWorkout"
 import { useState, useRef, useEffect, useContext } from "react"
-import { ObjectId } from "mongodb"
-import clientPromise from "@/lib/mongodb"
 import InExSet from "@/components/in-workout/InExSet"
 import classes from "./InWorkout.module.css"
 import CompletedEx from "@/components/in-workout/CompletedEx"
 import EndWorkout from "@/components/in-workout/EndWorkout"
-import { useRouter } from "next/navigation"
-import { Exercise, PlannedEx } from "@/types"
+import { useRouter, useSearchParams } from "next/navigation"
 import AuthContext from "@/stores/authContext"
 
 // TODO: workout should be the in-workout version and the regular version.
-export default function InWorkoutContent({params: {id}}) {
+export default function InWorkoutContent({}) {
+  const params = useSearchParams();
+  const id = params.get('id')
   const router = useRouter();
   const {user, authReady} = useContext(AuthContext)
-  // TODO: Fetch the users workout through the netlify function
-  const [workout, setWorkout] = useState({})
+  const [currWorkout, setCurrWorkout] = useState(() => {return {}})
+  const [currSet, setCurrSet] = useState(() => {return -1});
+  const [currEx, setCurrEx] = useState(() => {return -1})
+  // Whether we're in-between sets
+  const [inSet, setInSet] = useState(() => {
+    return true;
+  })
+  // Time left between sets
+  const [timeLeft, setTimeLeft] = useState(() => {
+    return -1;
+  });
+  // Whether timer between sets is running
+  const [timerRunning, setTimerRunning] = useState(() => {
+    return false;
+  })
+  const [numSets, setNumSets] = useState(() => {
+    // Calculate total number of sets
+    let sets = 0;
+    for (let i = 0; i < workout.exercises.length; i++) {
+      sets += workout.exercises[i].reps.length
+    }
+    return sets
+  })
+  const [initialLoad, setInitialLoad] = useState(() => {
+    return true;
+  })
+  
+  // Get workout data
   useEffect(() => {
+    console.log('this thing on???')
     if (authReady) {
-      fetch(`/.netlify/functions/inworkout/id=${id}`, user && 
+      fetch(`/.netlify/functions/inworkout?id=${id}`, user && { 
+        cache: 'no-store',
         headers: {
           Authorization: `Bearer ${user.token.access_token}`,
           'Content-Type': 'application/json'
         }
-      ).then(res => res.json())
-            .then(data => setWorkout(data))
+      }).then(res => res.json())
+            .then(data => {
+              setCurrWorkout(data.workoutData)
+              currSetProgress(data.workoutData)
+              exProgress(data.workoutData)
+            })
     }
-  }, [])
+  }, [user, authReady, id])
 
-  console.log(workout)
-  // Current exercise index
-  const [currEx, setCurrEx] = useState(() => {
-    if (workout.progress === undefined) {
-      return -1;
-    }
-    // Use progress to
-    let progress = workout.progress;
+  // TODO: Add some option to re-route users that didn't create this workout
 
-    // Go through each exercise and subtract its num sets from 
-    // progress while keeping progress non-negative
-    for (let i = 0; i < workout.exercises.length; i++) {
-      const numSets = workout.exercises[i].reps.length;
-      if (progress >= numSets) {
-        progress -= numSets
-      } else {
-        return i;
-      }
-    }
-    return progress === undefined ? -1 : workout.exercises.length;
-  });
-
-  // Set number of the current exercise
-  const [currSet, setCurrSet] = useState(() => {
+  // Sets the current set
+  function currSetProgress(workout) {
     if (workout.progress === undefined) {
       return -1;
     }
@@ -69,59 +80,32 @@ export default function InWorkoutContent({params: {id}}) {
          return progress;
        }
      }
-     return progress === undefined ? -1 : workout.exercises[workout.exercises.length - 1].reps.length;
-  })
-
-  // Total workout
-  const [currWorkout, setCurrWorkout] = useState(() => {
-    return JSON.parse(JSON.stringify(workout))
-  })
-
-  // Whether we're in-between sets or in them
-    // Used to conditionally render timer
-  const [inSet, setInSet] = useState(() => {
-    return true;
-  })
-
-  // Number of sets completed
-  const [progress, setProgress] = useState(() => {
-    if (workout.progress !== undefined) return workout.progress
-    return 0;
-  });
-
-  // Workout started
-  const [started, setStarted] = useState(() => {
-    return workout.progress !== undefined
-  });
-
-  // Time left between sets
-  const [timeLeft, setTimeLeft] = useState(() => {
-    return -1;
-  });
-
-  // Whether timer between sets is running
-  const [timerRunning, setTimerRunning] = useState(() => {
-    return false;
-  })
-
-  // Used to calculate total workout time
-  const [startTime, setStartTime] = useState(() => {
-    if (workout.progress !== undefined) return new Date(workout.startTime)
-    return new Date();
-  })
-
-  const [numSets, setNumSets] = useState(() => {
-    // Calculate total number of sets
-    let sets = 0;
-    for (let i = 0; i < workout.exercises.length; i++) {
-      sets += workout.exercises[i].reps.length
+     setCurrSet(progress === undefined ? -1 : workout.exercises[workout.exercises.length - 1].reps.length);
+  }
+  // Sets the current exercise
+  function exProgress(workout) {
+    if (workout.progress === undefined) {
+      return -1;
     }
-    return sets
-  })
+    // Use progress to
+    let progress = workout.progress;
 
-  const [initialLoad, setInitialLoad] = useState(() => {
-    return true;
-  })
+    // Go through each exercise and subtract its num sets from 
+    // progress while keeping progress non-negative
+    for (let i = 0; i < workout.exercises.length; i++) {
+      const numSets = workout.exercises[i].reps.length;
+      if (progress >= numSets) {
+        progress -= numSets
+      } else {
+        return i;
+      }
+    }
+    setCurrEx(progress === undefined ? -1 : workout.exercises.length);
+  }
+  // Sets the number of sets completed
+  function setTotalProgress(workout) {
+    if (workout.progress !== undefined) setProgress(workout.progress)
+  }
 
   // Stores the time left
   const timerId = useRef(100)
@@ -129,12 +113,11 @@ export default function InWorkoutContent({params: {id}}) {
   // Handles starting the workout displaying the
   // first ex and set.
   async function handleBegin() {
-    setStarted(true);
     setCurrEx(0);
     setCurrSet(0);
 
     let startWorkoutObj = {
-      ...workout,
+      ...currWorkout,
       startTime: new Date(),
       progress: 0
     }
@@ -292,10 +275,10 @@ export default function InWorkoutContent({params: {id}}) {
   return (
     <div className={classes.backdrop}>
       {/* Display workout to user before beginning */}
-      {!started && 
+      {currEx === -1  && 
             <BeginWorkout workout={currWorkout}
                       handleBegin={handleBegin}/>}
-      {started && currEx < currWorkout.exercises.length
+      {currEx !== -1 && currEx < currWorkout.exercises.length
                     && currSet < currWorkout.exercises[currEx].reps.length &&
         // Display the current exercise and set
         <InExSet 
@@ -311,7 +294,7 @@ export default function InWorkoutContent({params: {id}}) {
               img={"https://www.oregonlive.com/resizer/Gt7hxEHlKhuvvxLau5Pz5ZRZPvY=/arc-anglerfish-arc2-prod-advancelocal/public/XIWDL4WX5BAKRPGLU7TJIAYL24.jpeg"}/>
       }
       {/* Display the feedback / complete exercise screen */}
-      {started && currEx < currWorkout.exercises.length
+      {currEx !== -1 && currEx < currWorkout.exercises.length
            && currSet === currWorkout.exercises[currEx].reps.length && 
         <CompletedEx 
           progressPerc={`${Math.round(progress * 100 / numSets)}%`}

@@ -1,5 +1,6 @@
 'use client'
 import { createContext, useState, useEffect } from "react"
+import { useRouter } from "next/navigation";
 import netlifyIdentity from "netlify-identity-widget"
 
 // Create blueprint authentication object
@@ -15,11 +16,13 @@ export const AuthContextProvider = ({children}) => {
   // store login state and pass down to all other components
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false)
+  const router = useRouter()
 
   const login = () => {
     netlifyIdentity.open();
   }
   const logout = () => {
+    console.log("logged out")
     netlifyIdentity.logout();
   }
 
@@ -32,8 +35,11 @@ export const AuthContextProvider = ({children}) => {
     });
 
     netlifyIdentity.on("logout", () => {
-      setUser(null);
       console.log("logout event")
+      setUser(null);
+      window.location.reload(true)
+      // router.reload()
+      
     })
 
     netlifyIdentity.on('init', (user) => {

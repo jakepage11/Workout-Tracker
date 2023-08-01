@@ -19,13 +19,15 @@ export default function HomePage() {
   const utc = require('dayjs/plugin/utc');
   dayjs.extend(utc);
   const {user, authReady } = useContext(AuthContext)
-  // State
+
   const [showWorkout, setShowWorkout] = useState(() => {return false});
+  // currWorkout: Index of the workout that is being displayed in the modal
   const [currWorkout, setCurrWorkout] = useState(() => {return {}});
   const [workoutToday, setWorkoutToday] = useState(false)
   const [workouts, setWorkouts] = useState([])
   const [pastWorkouts, setPastWorkouts] = useState([])
-  const [progressWorkout, setProgressWorkout] = useState()
+  // Stores today's workout: inworkout version if it's already been started or regular if not
+  const [todayData, setTodayData] = useState({})
 
   // Grab all upcoming workouts
   useEffect(() => {
@@ -39,7 +41,6 @@ export default function HomePage() {
           }
         }).then(res => res.json()).then(data => {
           if (user) {
-            console.log(data)
             plannedWorkouts = JSON.parse(JSON.stringify(data));
             // Find if there's a workout today to display
             if (plannedWorkouts.length === 0) {
@@ -47,24 +48,25 @@ export default function HomePage() {
             } else {
               const date1 = dayjs.utc(plannedWorkouts[0].date).format('YYYY-MM-DD');
               const date2 = dayjs().format('YYYY-MM-DD');
-              console.log(date1)
-              console.log(date2)
-              const isToday = workouts.length > 0 && date1 === date2
+  
+              const isToday = plannedWorkouts.length > 0 && date1 === date2
               setWorkoutToday(isToday) 
               // if workout is in progress grab in-workout version
-              // if (isToday) {
-              //   const mongoClient = await clientPromise
-              //   const workout = await mongoClient.db(MONGODB_DATABASE).collection(MONGO_COLLECTION_INWORKOUT).findOne({_id: wid});
-              //   setProgressWorkout(workout)
-              // } 
+              if (isToday) {
+                fetch(`/.netlify/functions/inworkout?id=${plannedWorkouts[0]._id}`, {
+                  cache: "no-store",
+                  headers: {
+                    Authorization: `Bearer ${user.token.access_token}`
+                  }
+                }).then(res => res.json()).then(data2 => {
+                  setTodayData(data2.workoutData)})
+              } 
             }
             setWorkouts(plannedWorkouts)
           }
         })
       } 
   }, [user, authReady])
-  console.log(workouts)
-  console.log(workoutToday)
 
   // TODO: Grab past workouts
   useEffect(() => {
@@ -75,7 +77,6 @@ export default function HomePage() {
           Authorization: `Bearer ${user.token.access_token}`
         }
       }).then(res => res.json()).then(data => {
-        console.log(data)
         const past = JSON.parse(JSON.stringify(data));
         // setPastWorkouts(past)
       })
@@ -106,7 +107,6 @@ export default function HomePage() {
   const nextWorkouts = workoutsToMap.map((w, index) => {
     return <WorkoutCard key={nanoid()} workout={w} handlePreview={() => previewWorkout(index)}/>
   });
-  console.log({pastWorkouts})
   // Map each previous workout to a PastWorkoutCard
   const pastCards = pastWorkouts.map((w, index) => {
     return <PastWorkoutCard key={`past-workout-${index}`} workout={w}/>
@@ -118,12 +118,8 @@ export default function HomePage() {
   function startWorkout() {
     // Get the first workout in the props (this will be today's workout)
     console.log("starting workout")
-    router.push({
-      pathname: "/in-workout",
-      query: {workoutId: workouts[0]._id}
-     });
+    router.push(`/in-workout?id=${todayData._id}`)
   }
-  
   return (
     <div className={classes.body}>
         <div className={classes.nextWorkoutContainer}>
@@ -140,7 +136,7 @@ export default function HomePage() {
                 }
               </div>
               {workouts[0].completeIn === "" && 
-              <TodayWorkoutCard workout={todayInProgress !== null ? todayInProgress : workouts[0]}
+              <TodayWorkoutCard workout={todayData}
                               handleStart={startWorkout} complete={workouts[0].completeIn !== ""}/>}
             </div>
           }

@@ -10,7 +10,7 @@ export default async function handler(req, res) {
           .insertOne({
             ...data,
             _id: new ObjectId(data._id),
-            date: new Date(data.date)
+            date: new Date()
           });
 
     //  console.log(result)

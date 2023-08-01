@@ -120,7 +120,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "app/page.js"  ],
+, "app/page.js", "app/in-workout/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]

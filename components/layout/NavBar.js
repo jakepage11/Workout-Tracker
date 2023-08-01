@@ -7,7 +7,6 @@ import { useContext } from "react"
 
 export default function NavBar() {
   const {user, login, logout} = useContext(AuthContext);
-  console.log(user);
 
   return (
     <div className={classes.main}>
