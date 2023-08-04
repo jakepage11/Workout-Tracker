@@ -37,9 +37,8 @@ export const AuthContextProvider = ({children}) => {
     netlifyIdentity.on("logout", () => {
       console.log("logout event")
       setUser(null);
-      window.location.reload(true)
-      // router.reload()
-      
+      // send to home and refresh
+      window.location.reload();
     })
 
     netlifyIdentity.on('init', (user) => {

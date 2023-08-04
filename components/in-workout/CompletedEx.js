@@ -1,3 +1,4 @@
+'use client'
 import inSetClasses from "./InExSet.module.css"
 import classes from "./CompletedEx.module.css"
 import { useRef, useEffect, useState } from "react"

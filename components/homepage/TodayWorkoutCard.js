@@ -18,7 +18,7 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
   // Extracting time of day from UTC
   const utc = require('dayjs/plugin/utc');
   dayjs.extend(utc);
-  let dateStr = dayjs.utc(workout.date).format('HH:mm A')
+  let dateStr = dayjs.utc(workout.date).format('h:mm A')
 
   // calculate the set and exercise number if workout is in progress
   let exName = "";

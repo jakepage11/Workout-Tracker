@@ -7,9 +7,11 @@ import CompletedEx from "@/components/in-workout/CompletedEx"
 import EndWorkout from "@/components/in-workout/EndWorkout"
 import { useRouter, useSearchParams } from "next/navigation"
 import AuthContext from "@/stores/authContext"
+import { StackedBarChartSharp } from "@mui/icons-material"
 
 // TODO: workout should be the in-workout version and the regular version.
 export default function InWorkoutContent({}) {
+  // Grab the id query param to then get the corresponding workout
   const params = useSearchParams();
   const id = params.get('id')
   const router = useRouter();
@@ -29,17 +31,18 @@ export default function InWorkoutContent({}) {
   const [timerRunning, setTimerRunning] = useState(() => {
     return false;
   })
-  const [numSets, setNumSets] = useState(() => {
-    // Calculate total number of sets
-    let sets = 0;
-    for (let i = 0; i < workout.exercises.length; i++) {
-      sets += workout.exercises[i].reps.length
-    }
-    return sets
-  })
+  // const [numSets, setNumSets] = useState(() => {
+  //   // Calculate total number of sets
+  //   let sets = 0;
+  //   for (let i = 0; i < workout.exercises.length; i++) {
+  //     sets += workout.exercises[i].reps.length
+  //   }
+  //   return sets
+  // })
   const [initialLoad, setInitialLoad] = useState(() => {
     return true;
   })
+  const [hasAccess, setHasAccess] = useState(false)
   
   // Get workout data
   useEffect(() => {
@@ -53,12 +56,18 @@ export default function InWorkoutContent({}) {
         }
       }).then(res => res.json())
             .then(data => {
-              setCurrWorkout(data.workoutData)
-              currSetProgress(data.workoutData)
-              exProgress(data.workoutData)
+              if (data.message === undefined) { // user does have access
+                setHasAccess(true);
+                setCurrWorkout(data.workoutData)
+                currSetProgress(data.workoutData)
+                exProgress(data.workoutData)
+              } else {
+                setHasAccess(false);
+              }
             })
     }
   }, [user, authReady, id])
+  console.log({currWorkout})
 
   // TODO: Add some option to re-route users that didn't create this workout
 
@@ -273,46 +282,51 @@ export default function InWorkoutContent({}) {
   }
 
   return (
-    <div className={classes.backdrop}>
-      {/* Display workout to user before beginning */}
-      {currEx === -1  && 
-            <BeginWorkout workout={currWorkout}
-                      handleBegin={handleBegin}/>}
-      {currEx !== -1 && currEx < currWorkout.exercises.length
-                    && currSet < currWorkout.exercises[currEx].reps.length &&
-        // Display the current exercise and set
-        <InExSet 
-              progressPerc={`${Math.round(progress * 100 / numSets)}%`}
-              ex={currWorkout.exercises[currEx]}
-              setNum={currSet}
-              inSet={inSet}
-              descr={exDescrs[currWorkout.exercises[currEx].name]} // Make API call to get exercise info
-              handleSetComplete={handleSetComplete}
-              handleStopTimer={stopCountdown}
-              timer={timeLeft}
-              timerRunning={timerRunning}
-              img={"https://www.oregonlive.com/resizer/Gt7hxEHlKhuvvxLau5Pz5ZRZPvY=/arc-anglerfish-arc2-prod-advancelocal/public/XIWDL4WX5BAKRPGLU7TJIAYL24.jpeg"}/>
-      }
-      {/* Display the feedback / complete exercise screen */}
-      {currEx !== -1 && currEx < currWorkout.exercises.length
-           && currSet === currWorkout.exercises[currEx].reps.length && 
-        <CompletedEx 
-          progressPerc={`${Math.round(progress * 100 / numSets)}%`}
-          exname={currWorkout.exercises[currEx].name}
-          numsets={currWorkout.exercises[currEx].reps.length}
-          nextExercise={currEx + 1 < currWorkout.exercises.length 
-            ? currWorkout.exercises[currEx + 1] 
-            : undefined}
-          handleStartNextExercise={handleNextExercise}
-          handleRating={handleRating}
-        />
-      }
-      {/* Workout summary page */}
-      { currEx === currWorkout.exercises.length &&  
-        <EndWorkout workout={currWorkout}
-                    handleCompleteWorkout={submitWorkout}/>
-      }
-    </div>
+    <></>
+    // <>
+    //   {!hasAccess && <div>You don't have access to this workout</div>}
+    //   {hasAccess && <div className={classes.backdrop}>
+    //     {/* Display workout to user before beginning */}
+    //     {currEx === -1  && 
+    //           <BeginWorkout workout={currWorkout}
+    //                     handleBegin={handleBegin}/>}
+    //     {currEx !== -1 && currEx < currWorkout.exercises.length
+    //                   && currSet < currWorkout.exercises[currEx].reps.length &&
+    //       // Display the current exercise and set
+    //       <InExSet 
+    //             progressPerc={`${Math.round(progress * 100 / numSets)}%`}
+    //             ex={currWorkout.exercises[currEx]}
+    //             setNum={currSet}
+    //             inSet={inSet}
+    //             descr={exDescrs[currWorkout.exercises[currEx].name]} // Make API call to get exercise info
+    //             handleSetComplete={handleSetComplete}
+    //             handleStopTimer={stopCountdown}
+    //             timer={timeLeft}
+    //             timerRunning={timerRunning}
+    //             img={"https://www.oregonlive.com/resizer/Gt7hxEHlKhuvvxLau5Pz5ZRZPvY=/arc-anglerfish-arc2-prod-advancelocal/public/XIWDL4WX5BAKRPGLU7TJIAYL24.jpeg"}/>
+    //     }
+    //     {/* Display the feedback / complete exercise screen */}
+    //     {currEx !== -1 && currEx < currWorkout.exercises.length
+    //         && currSet === currWorkout.exercises[currEx].reps.length && 
+    //       <CompletedEx 
+    //         progressPerc={`${Math.round(progress * 100 / numSets)}%`}
+    //         exname={currWorkout.exercises[currEx].name}
+    //         numsets={currWorkout.exercises[currEx].reps.length}
+    //         nextExercise={currEx + 1 < currWorkout.exercises.length 
+    //           ? currWorkout.exercises[currEx + 1] 
+    //           : undefined}
+    //         handleStartNextExercise={handleNextExercise}
+    //         handleRating={handleRating}
+    //       />
+    //     }
+    //     {/* Workout summary page */}
+    //     { currEx === currWorkout.exercises.length &&  
+    //       <EndWorkout workout={currWorkout}
+    //                   handleCompleteWorkout={submitWorkout}/>
+    //     }
+    //   </div>}
+      
+    // </>
    
   )
 

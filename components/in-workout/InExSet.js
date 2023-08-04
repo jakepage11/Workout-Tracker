@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useRef, useState} from "react";
 import classes from "./InExSet.module.css";
 import SliderOverlay from "./SliderOverlay";
@@ -21,7 +22,7 @@ export default function InExSet({progressPerc, ex, setNum, descr, img, handleSet
   return (
     <div className={classes.background}>
         <div className={classes.contentContainer}>
-          {timer !== -1 && <SliderOverlay timeLeft={timer} totalTime={100}/> }
+          {timer !== -1 && <div><SliderOverlay timeLeft={timer} totalTime={100}/></div> }
           {/* Have this one be the outline */}
           <div className={classes.progressContainer}>
             {/* Inner will be how much is filled */}
