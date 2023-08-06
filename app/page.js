@@ -33,7 +33,6 @@ export default function HomePage() {
   useEffect(() => {
     if (authReady) {
       let plannedWorkouts
-      console.log(user)
       fetch('./.netlify/functions/futureworkouts', user && {
           cache: 'no-store',
           headers: {
@@ -42,7 +41,6 @@ export default function HomePage() {
         }).then(res => res.json()).then(data => {
           if (user) {
             plannedWorkouts = JSON.parse(JSON.stringify(data));
-            console.log({plannedWorkouts})
             // Find if there's a workout today to display
             if (plannedWorkouts.length === 0) {
               setWorkoutToday(false)
@@ -79,8 +77,9 @@ export default function HomePage() {
           Authorization: `Bearer ${user.token.access_token}`
         }
       }).then(res => res.json()).then(data => {
-        const past = JSON.parse(JSON.stringify(data));
-        // setPastWorkouts(past)
+        if (user) {
+          setPastWorkouts(data)
+        }
       })
     } 
   }, [user, authReady])
@@ -99,11 +98,15 @@ export default function HomePage() {
     setShowWorkout(false);
   }
 
+
+  console.log({workouts})
+  console.log({pastWorkouts})
   const workoutsToMap = JSON.parse(JSON.stringify(workouts))
   if (workoutToday) {
     // don't show today's workout under "Upcoming"
     workoutsToMap.splice(0,1);
   }
+  console.log({workoutsToMap})
 
   // Map Each workout to a Workout card
   const nextWorkouts = workoutsToMap.map((w, index) => {
@@ -113,9 +116,6 @@ export default function HomePage() {
   const pastCards = pastWorkouts.map((w, index) => {
     return <PastWorkoutCard key={`past-workout-${index}`} workout={w}/>
   })
-  
-  console.log({todayData})
-  console.log({workoutToday})
 
   // TODO: Add implementation that will handle whether "Start Workout"
   // button should be displayed. And add the type of today's workout.
@@ -124,85 +124,70 @@ export default function HomePage() {
     console.log("starting workout")
     router.push(`/in-workout/${todayData._id}`)
   }
+
   return (
-    <></>
-    // <div className={classes.body}>
-    //     <div className={classes.nextWorkoutContainer}>
-    //       {workoutToday && 
-    //         <div>
-    //           <div style={{"display": "flex", 'alignItems': "center", 'gap': "10px"}}>
-    //             {/* if workout has already been completed */}
+    <div className={classes.body}>
+        <div className={classes.nextWorkoutContainer}>
+          {workoutToday && 
+            <div>
+              <div style={{"display": "flex", 'alignItems': "center", 'gap': "10px"}}>
+                {/* if workout has already been completed */}
                 
-    //             <h1 className={classes.headers}>
-    //               {"Today's Workout"}
-    //             </h1>
-    //             {workouts[0].completeIn !== "" &&
-    //               <div>
-    //                 <CheckCircle style={{"color": "green", "font-size": "40px"}}/>
-    //                 </div>
-    //             }
-    //           </div>
-    //           {workouts[0].completeIn === "" && 
-    //             <TodayWorkoutCard workout={todayData}
-    //                           handleStart={startWorkout} complete={workouts[0].completeIn !== ""}/>}
-    //         </div>
-    //       }
-    //       {!workoutToday && workouts.length !== 0 && 
-    //           <label className={classes.nextWorkoutHeader}>
-    //             Next Workout {new Date(workouts[0].date).toUTCString().substring(0,16)}
-    //           </label>
-    //       }
-    //       {!workoutToday && workouts.length === 0 && 
-    //           <label className={classes.nextWorkoutHeader}>
-    //             No workouts scheduled
-    //           </label>
-    //       }
-    //     </div>
-    //     <h1 className={classes.headers}>
-    //       Upcoming
-    //     </h1>
-    //     {/* no schedule workouts */}
-    //     {workouts.length === 0 && 
-    //       <h6 className={classes.emptyUpcoming}>
-    //         No workouts scheduled
-    //       </h6>
-    //     }
-    //     <div className={classes.cards}>
-    //       {nextWorkouts}
-    //     </div>
-    //     <div className={classes.goals}>
-    //       <h1 className={classes.headers}>
-    //         Current Goals
-    //       </h1>
-    //       {/* <GoalCard rules={["Gains"]}/> */}
-    //     </div>
-    //     <div>
-    //       <h1 className={classes.headers}>
-    //         Past Workouts
-    //       </h1>
-    //       <div className={classes.pastWorkoutsContainer}>
-    //         {pastCards}
-    //       </div>
-    //     </div>
-    //     {showWorkout && 
-    //       <ViewWorkout workoutProp={workouts[currWorkout]}
-    //                   handleClose={() => {setShowWorkout(false)}}/>
-    //     }
-        
-    // </div>
+                <h1 className={classes.headers}>
+                  {"Today's Workout"}
+                </h1>
+                {workouts[0].completeIn !== "" &&
+                  <div>
+                    <CheckCircle style={{"color": "green", "font-size": "40px"}}/>
+                    </div>
+                }
+              </div>
+              {workouts[0].completeIn === "" && 
+                <TodayWorkoutCard workout={todayData}
+                              handleStart={startWorkout} complete={workouts[0].completeIn !== ""}/>}
+            </div>
+          }
+          {!workoutToday && workouts.length !== 0 && 
+              <label className={classes.nextWorkoutHeader}>
+                Next Workout {new Date(workouts[0].date).toUTCString().substring(0,16)}
+              </label>
+          }
+          {!workoutToday && workouts.length === 0 && 
+              <label className={classes.nextWorkoutHeader}>
+                No workouts scheduled
+              </label>
+          }
+        </div>
+        <h1 className={classes.headers}>
+          Upcoming
+        </h1>
+        {/* no schedule workouts */}
+        {workouts.length === 0 && 
+          <h6 className={classes.emptyUpcoming}>
+            No workouts scheduled
+          </h6>
+        }
+        <div className={classes.cards}>
+          {nextWorkouts}
+        </div>
+        <div className={classes.goals}>
+          <h1 className={classes.headers}>
+            Current Goals
+          </h1>
+          {/* <GoalCard rules={["Gains"]}/> */}
+        </div>
+        <div>
+          <h1 className={classes.headers}>
+            Past Workouts
+          </h1>
+          <div className={classes.pastWorkoutsContainer}>
+            {pastCards}
+          </div>
+        </div>
+        {showWorkout && 
+          <ViewWorkout workoutProp={workouts[currWorkout]}
+                      handleClose={() => {setShowWorkout(false)}}/>
+        }
+    </div>
   )
 }
-
-// export async function getServerSideProps() {
- 
-  // Check if there is a planned workout and if it is today
-  // if (data.length > 0) {
-  //   const firstWorkoutDate = dayjs.utc(JSON.parse(JSON.stringify(data))[0].date)
-  //   if (todayDateLocal === firstWorkoutDate) {
-  //     const wid = new ObjectId(JSON.parse(JSON.stringify(data))[0]._id)
-  //     inProgressWorkout = await mongoClient.db().collection('in-workout-testing')
-  //                           .findOne({_id: wid});
-  //   }
-  // }
-
-// }

@@ -9,29 +9,26 @@ exports.handler = async (event, context) => {
 
   try {
     const { user } = context.clientContext;
-
     if (user) { // logged in
       const dayjs = require('dayjs');
       const utc = require('dayjs/plugin/utc');
       dayjs.extend(utc);
      
       // TODO: Fix the date logic
-      const startTodayUTC = dayjs().startOf('day').utc("true")
+      const startTodayUTC = dayjs().startOf('day').utc('true')
       const endTodayUTC = dayjs().endOf('day').utc("true")
-      const endWeek = endTodayUTC.add(1, 'week')
       const pastStartDay = startTodayUTC.subtract(2, 'week')
-  
-      // Grab all upcoming workouts in the next 1 week
+      // Grab all workouts from the past 2 weeks
       const pastData = await mongoConnection.db(process.env.MONGODB_DATABASE)
                       .collection(process.env.MONGODB_COLLECTION_WORKOUTS)
-                      .find({date: {$gte: pastStartDay.$d, $lte: endTodayUTC.$d}, completeIn: {$ne: ""}})
+                      .find({date: {$gte: pastStartDay.$d, $lte: endTodayUTC.$d}, completeIn: {$ne: ""}, user: user.email})
                       .sort({date: -1}).toArray();
       return {
         statusCode: 200,
         body: JSON.stringify(pastData)
       }
     }
-  
+    // User isn't logged in
     return {
       statusCode: 401,
       body: JSON.stringify({mssg: "Need to be logged in"})
