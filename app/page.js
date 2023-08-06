@@ -97,16 +97,12 @@ export default function HomePage() {
     setCurrWorkout({});
     setShowWorkout(false);
   }
-
-
-  console.log({workouts})
-  console.log({pastWorkouts})
+  
   const workoutsToMap = JSON.parse(JSON.stringify(workouts))
   if (workoutToday) {
     // don't show today's workout under "Upcoming"
     workoutsToMap.splice(0,1);
   }
-  console.log({workoutsToMap})
 
   // Map Each workout to a Workout card
   const nextWorkouts = workoutsToMap.map((w, index) => {

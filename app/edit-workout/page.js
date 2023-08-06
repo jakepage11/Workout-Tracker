@@ -1,10 +1,9 @@
 'use client'
 import classes from "../create-workout/CreateWorkout.module.css"
-
 import NewWorkoutForm from "@/components/create-workout/NewWorkoutForm";
 import { useRouter } from "next/navigation";
 
-export default function EditWorkoutPage({exerciseList, workoutProp, workoutTypes}) {
+export default function EditWorkoutPage() {
   const router = useRouter();
   // Sends the particular workout data to the db
   // TODO: Use updated version of this method from create workout
@@ -25,6 +24,7 @@ export default function EditWorkoutPage({exerciseList, workoutProp, workoutTypes
     exs.push()
     return exs;
   }
+  // TODO: Fetch data
   
   return (
     <div className={classes.page}>
@@ -34,12 +34,12 @@ export default function EditWorkoutPage({exerciseList, workoutProp, workoutTypes
         </div>
 
         <div className={classes.formContainer}>
-          <NewWorkoutForm 
+          {/* <NewWorkoutForm 
                     handleSubmit={handleSubmit} 
-                    workoutTypes={workoutTypes}
-                    allExercises={exerciseList}
-                    workout={workoutProp}
-                    />
+                    workoutTypes={null}
+                    allExercises={null}
+                    workout={null}
+                    /> */}
         </div>
       </div>
     </div>
