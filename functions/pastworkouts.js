@@ -31,7 +31,7 @@ exports.handler = async (event, context) => {
     // User isn't logged in
     return {
       statusCode: 401,
-      body: JSON.stringify({mssg: "Need to be logged in"})
+      body: JSON.stringify({mssg: "Current user is not logged in"})
     }
   } catch (error) {
     return {

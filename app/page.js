@@ -31,18 +31,17 @@ export default function HomePage() {
 
   // Grab all upcoming workouts
   useEffect(() => {
-    if (authReady) {
+    if (authReady && user) {
       let plannedWorkouts
-      fetch('./.netlify/functions/futureworkouts', user && {
+      fetch('/.netlify/functions/futureworkouts', user && {
           cache: 'no-store',
           headers: {
             Authorization: `Bearer ${user.token.access_token}`
           }
         }).then(res => res.json()).then(data => {
-          if (user) {
             plannedWorkouts = JSON.parse(JSON.stringify(data));
             // Find if there's a workout today to display
-            if (plannedWorkouts.length === 0) {
+            if (plannedWorkouts.mssg !== undefined || plannedWorkouts.length === 0) {
               setWorkoutToday(false)
             } else {
               const date1 = dayjs.utc(plannedWorkouts[0].date).format('YYYY-MM-DD');
@@ -63,23 +62,20 @@ export default function HomePage() {
               } 
             }
             setWorkouts(plannedWorkouts)
-          }
         })
       } 
   }, [user, authReady])
 
   // TODO: Grab past workouts
   useEffect(() => {
-    if (authReady) {
+    if (authReady && user) {
       fetch('./.netlify/functions/pastworkouts', user && {
         cache: 'no-store',
         headers: {
           Authorization: `Bearer ${user.token.access_token}`
         }
       }).then(res => res.json()).then(data => {
-        if (user) {
-          setPastWorkouts(data)
-        }
+        setPastWorkouts(data)
       })
     } 
   }, [user, authReady])
