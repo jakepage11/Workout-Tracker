@@ -1,10 +1,10 @@
-
+'use client'
 import classes from "../create-workout/CreateWorkout.module.css"
 
 import NewWorkoutForm from "@/components/create-workout/NewWorkoutForm";
 import { useRouter } from "next/navigation";
 
-export default async function EditWorkoutPage({exerciseList, workoutProp, workoutTypes}) {
+export default function EditWorkoutPage({exerciseList, workoutProp, workoutTypes}) {
   const router = useRouter();
   // Sends the particular workout data to the db
   // TODO: Use updated version of this method from create workout
