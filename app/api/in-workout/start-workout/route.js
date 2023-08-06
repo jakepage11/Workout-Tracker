@@ -1,19 +1,20 @@
 import clientPromise from "@/lib/mongodb"
-import { MONGO_CLIENT_EVENTS, ObjectId } from "mongodb"
+import { ObjectId } from "mongodb"
+import { NextResponse } from "next/server";
 
-export default async function handler(req, res) {
-  if (req.method === 'POST') {
-     const mongoClient = await clientPromise;
-     const data = req.body;
-     
-     const result = await mongoClient.db().collection(process.env.MONGODB_COLLECTION_INWORKOUT)
-          .insertOne({
-            ...data,
-            _id: new ObjectId(data._id),
-            date: new Date()
-          });
+export async function POST(req) {
+  const mongoClient = await clientPromise;
+  const data = await req.json();
 
-    //  console.log(result)
-     res.status(201).json('Workout started :)');
-  }
+  console.log({data})
+  
+  const result = await mongoClient.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_INWORKOUT)
+                .insertOne({
+                  ...data,
+                  _id: new ObjectId(data._id),
+                  date: new Date()
+                });
+
+  console.log(result)
+  return NextResponse.json({status: 201})
 }

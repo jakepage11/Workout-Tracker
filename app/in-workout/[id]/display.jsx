@@ -10,10 +10,18 @@ import AuthContext from "@/stores/authContext"
 import { StackedBarChartSharp } from "@mui/icons-material"
 
 // TODO: workout should be the in-workout version and the regular version.
-export default function InWorkoutContent({workout}) {
+export default function InWorkoutContent({workout, exDescrs}) {
+  const { user } = useContext(AuthContext)
+  console.log({workout})
   // Grab the id query param to then get the corresponding workout
   const router = useRouter();
-  const [currWorkout, setCurrWorkout] = useState(() => {return {...workout}})
+  const [currWorkout, setCurrWorkout] = useState(() => {
+    // set the progress of sets and exercise
+    currSetProgress(workout)
+    exProgress(workout)
+    setTotalProgress(workout)
+    return JSON.parse(JSON.stringify(workout))
+  })
   const [currSet, setCurrSet] = useState(() => {return -1});
   const [currEx, setCurrEx] = useState(() => {return -1})
   // Whether we're in-between sets
@@ -31,6 +39,9 @@ export default function InWorkoutContent({workout}) {
   const [initialLoad, setInitialLoad] = useState(() => {
     return true;
   })
+  // TODO: Get the progress of the workout
+  const [progress, setProgress] = useState(() => 0)
+  const [numSets, setNumSets] = useState(() => -1);
 
   // Sets the current set
   function currSetProgress(workout) {
@@ -88,12 +99,14 @@ export default function InWorkoutContent({workout}) {
 
     let startWorkoutObj = {
       ...currWorkout,
+      user: user.email,
       startTime: new Date(),
       progress: 0
     }
+    console.log({startWorkoutObj})
 
     // Create in workout document in database
-    const res = await fetch('api/in-workout/start-workout', {
+    const res = await fetch('/api/in-workout/start-workout', {
       method: "POST",
       body: JSON.stringify(startWorkoutObj),
       headers: {
@@ -110,7 +123,7 @@ export default function InWorkoutContent({workout}) {
       if (currEx + 1 === currWorkout.exercises.length) { // finished workout
         // finished the last set so calculate completeIn time
         const now = new Date();
-        const completeInMillis = now - startTime;
+        const completeInMillis = now - currWorkout.startTime;
         const completeInMins = Math.floor(completeInMillis / (1000 * 60));
     
         setCurrWorkout(prevState => ({
@@ -241,6 +254,7 @@ export default function InWorkoutContent({workout}) {
     setCurrEx(prevState => prevState - 1);
     setCurrSet(currWorkout.exercises[currEx - 1].reps.length);
   }
+  console.log({currWorkout})
 
   return (
     <div className={classes.backdrop}>
