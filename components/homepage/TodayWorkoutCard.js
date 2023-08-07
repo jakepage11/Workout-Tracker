@@ -76,7 +76,7 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
         <div className={classes.bottomInnerDivs}>
           <img src={locationIcon.src} alt="location" />
           <label>
-            24 Hour Fitness
+            location
           </label>
         </div>
         {/* People if needed */}
@@ -87,7 +87,7 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
         {/* Estimated time */}
         <div className={classes.bottomInnerDivs}>
         <img src={timerIcon.src} alt="timer" />
-          <label>55 min</label>
+          <label>-1 min</label>
         </div>
       </div>
     </div>

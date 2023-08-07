@@ -46,8 +46,6 @@ export default function HomePage() {
             } else {
               const date1 = dayjs.utc(plannedWorkouts[0].date).format('YYYY-MM-DD');
               const date2 = dayjs().format('YYYY-MM-DD');
-              console.log({date1})
-              console.log({date2})
               const isToday = plannedWorkouts.length > 0 && date1 === date2
               setWorkoutToday(isToday) 
               // if workout is in progress grab in-workout version
@@ -113,9 +111,9 @@ export default function HomePage() {
   // button should be displayed. And add the type of today's workout.
   function startWorkout() {
     // Get the first workout in the props (this will be today's workout)
-    console.log("starting workout")
     router.push(`/in-workout/${todayData._id}`)
   }
+
 
   return (
     <div className={classes.body}>

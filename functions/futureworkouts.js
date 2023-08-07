@@ -25,7 +25,6 @@ exports.handler = async (event, context) => {
       const data = await mongoConnection.db(process.env.MONGODB_DATABASE).collection(process.env.MONGODB_COLLECTION_WORKOUTS)
                   .find({date: {$gte: startTodayUTC.$d, $lt: endWeek.$d}, completeIn: "", user: user.email})
                   .sort({date: 1}).toArray();
-     
       return {
         statusCode: 200,
         body: JSON.stringify(data)

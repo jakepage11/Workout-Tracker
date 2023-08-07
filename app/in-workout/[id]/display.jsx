@@ -12,16 +12,9 @@ import { StackedBarChartSharp } from "@mui/icons-material"
 // TODO: workout should be the in-workout version and the regular version.
 export default function InWorkoutContent({workout, exDescrs}) {
   const { user } = useContext(AuthContext)
-  console.log({workout})
   // Grab the id query param to then get the corresponding workout
   const router = useRouter();
-  const [currWorkout, setCurrWorkout] = useState(() => {
-    // set the progress of sets and exercise
-    currSetProgress(workout)
-    exProgress(workout)
-    setTotalProgress(workout)
-    return JSON.parse(JSON.stringify(workout))
-  })
+  const [progress, setProgress] = useState(() => 0)
   const [currSet, setCurrSet] = useState(() => {return -1});
   const [currEx, setCurrEx] = useState(() => {return -1})
   // Whether we're in-between sets
@@ -40,8 +33,14 @@ export default function InWorkoutContent({workout, exDescrs}) {
     return true;
   })
   // TODO: Get the progress of the workout
-  const [progress, setProgress] = useState(() => 0)
   const [numSets, setNumSets] = useState(() => -1);
+  const [currWorkout, setCurrWorkout] = useState(() => {
+    // set the progress of sets and exercise
+    currSetProgress(workout)
+    exProgress(workout)
+    setTotalProgress(workout)
+    return JSON.parse(JSON.stringify(workout))
+  })
 
   // Sets the current set
   function currSetProgress(workout) {
@@ -145,13 +144,14 @@ export default function InWorkoutContent({workout, exDescrs}) {
   // Send progress to backend
   async function updateProgress() {
     console.log("updating progress")
-    const res = fetch('api/in-workout/update-progress', {
+    const res = fetch('/.netlify/functions/update-progress', {
       method: 'POST',
       body: JSON.stringify({
         ...currWorkout,
         progress: progress + 1
       }),
       headers: {
+        Authorization: `Bearer ${user.token.access_token}`,
         'Content-Type': 'application/json'
       }
     })
@@ -217,7 +217,7 @@ export default function InWorkoutContent({workout, exDescrs}) {
   }
 
   async function updateFeedback() {
-    const res = await fetch('api/in-workout/update-progress', {
+    const res = await fetch('/.netlify/functions/update-progress', {
       method: 'POST',
       body: JSON.stringify({
         ...currWorkout,
@@ -225,17 +225,20 @@ export default function InWorkoutContent({workout, exDescrs}) {
         rating: currWorkout.exercises[currEx].difficulty
       }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${user.token.access_token}`
       }
     })
   }
 
   // Saves workout user data and exits to the home page
   async function submitWorkout() {
-    const res = await fetch("/api/in-workout/finish-workout", {
+    console.log({currWorkout})
+    const res = await fetch("/.netlify/functions/finish-workout", {
       method: 'POST',
       body: JSON.stringify({...currWorkout}),
       headers: {
+        Authorization: `Bearer ${user.token.access_token}`,
         'Content-Type': 'application/json'
       }
     });

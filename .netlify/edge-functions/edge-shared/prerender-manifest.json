@@ -1,1 +1,7 @@
-{"version":4,"routes":{"/edit-workout":{"initialRevalidateSeconds":false,"srcRoute":"/edit-workout","dataRoute":"/edit-workout.rsc"},"/":{"initialRevalidateSeconds":false,"srcRoute":"/","dataRoute":"/index.rsc"},"/api/all-exercises":{"initialHeaders":{"content-type":"application/json","x-next-cache-tags":"/api/all-exercises/route"},"initialRevalidateSeconds":false,"srcRoute":"/api/all-exercises","dataRoute":null},"/create-workout":{"initialRevalidateSeconds":false,"srcRoute":"/create-workout","dataRoute":"/create-workout.rsc"}},"dynamicRoutes":{},"notFoundRoutes":[],"preview":{"previewModeId":"cbcdea1c18bfec7c0639b162f3293c02","previewModeSigningKey":"9330a6f231700cf320614ea322fee2bcbd447fd35960ca5e5e84a2b0259eb52f","previewModeEncryptionKey":"715056fdcda827dc9307300880e5766f9f2a5a6b6fc3b11a8a3f9a7d39c56d64"}}
+{
+  "version": 3,
+  "routes": {},
+  "dynamicRoutes": {},
+  "notFoundRoutes": [],
+  "preview": {}
+}
