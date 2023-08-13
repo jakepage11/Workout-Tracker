@@ -82,21 +82,30 @@ export default function NewWorkoutForm({workout, workoutTypes, allExercises}) {
   }, [currWorkout])
 
   // Sends the particular workout data to the db
-  async function handleSubmit(workout) {
+  async function handleSubmit(workoutParam) {
     
-    if (user) { // only create workout for 
-      const fullWorkout = {...workout, user: user.email}
-      console.log({fullWorkout})
-      const res = await fetch("/api/create-workout", {
-        method: 'POST',
-        body: JSON.stringify(fullWorkout),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+    if (user) { // only create workout for users that are logged in
+      if (workout === undefined) {  // User is creating for the first time
+        const fullWorkout = {...workoutParam, user: user.email}
+        const res = await fetch("/.netlify/functions/create-workout", {
+          method: 'POST',
+          body: JSON.stringify(fullWorkout),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+      } else { // editing the workout
+        await fetch('/.netlify/functions/update-workout', {
+          body: JSON.stringify(workoutParam),
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${user.token.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        })
 
-      const data = await res.json();
-      router.push("/");
+      }
+      // router.push("/");
     } else {
       login();
     }
@@ -378,9 +387,21 @@ function handleFormOnDrop(e) {
         exercises: JSON.parse(JSON.stringify(exCopy))
       }
     });
-    
   }
 
+  // Removes the Create Set Modal from the screen
+  function closeCreateSet() {
+    setCreateSetIndex(-1);
+    setShowCreateSet(false)
+  }
+
+  // Removes any changes the user had made in this session
+  function revertChanges() {
+    setCurrWorkout({...JSON.parse(JSON.stringify(workout))});
+    setShowCreateSet(false)
+    closeCreateSet()
+    console.log("reset")
+  }
 
   // Creates the exercises array that stores all exercises in the current
   // workout along with the sets that contain their own reps and load.
@@ -468,7 +489,7 @@ function handleFormOnDrop(e) {
                 <div className={classes.editBtnsContainer}>
                   <button className={classes.submitBtn} onClick={(e) => handleSubmitLocal(e)}>Save Changes</button>
                   <p className={classes.revertChanges}
-                      onClick={() => {setCurrWorkout({...JSON.parse(JSON.stringify(workout))})}}>
+                      onClick={revertChanges}>
                     <u>Revert Changes</u>
                   </p>
                 </div>

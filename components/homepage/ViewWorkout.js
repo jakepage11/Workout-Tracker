@@ -34,10 +34,7 @@ export default function ViewWorkout({workoutProp, handleClose}) {
     handleClose();
   
     // Push the new Edit Workout page with the given workout
-    router.push({
-     pathname: "/edit-workout",
-     query: {workoutId: workoutProp._id}
-    });
+    router.push(`/edit-workout/${workoutProp._id}`);
   }
 
   // Expand or collapse specific exercise to either show or

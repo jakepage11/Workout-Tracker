@@ -8,12 +8,9 @@ import { nanoid } from "nanoid"
 
 // Home page component that displays short info about upcoming workouts
 export default function WorkoutCard({workout, handlePreview}) {
-
   const dayJsDate = dayjs.utc(workout.date);
   const formatDate = dayJsDate.format('M-DD');
-  console.log({workout})
   const firstThree = [...workout.exercises].splice(0, 3);
-  // console.log({firstThree})
   
   return (
     <div className={classes.card} onClick={handlePreview}>
