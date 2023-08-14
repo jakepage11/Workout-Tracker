@@ -44,4 +44,11 @@ button {
   color: white;
 }
 
+.closeIcon {
+  position: absolute;
+  top: 2px;
+  right: 5px;
+  cursor: pointer;
+}
+
 

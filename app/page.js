@@ -61,21 +61,26 @@ export default function HomePage() {
             }
             setWorkouts(plannedWorkouts)
         })
-      } 
+      } else {
+        setWorkouts([])
+      }
   }, [user, authReady])
 
   // TODO: Grab past workouts
   useEffect(() => {
     if (authReady && user) {
-      fetch('./.netlify/functions/pastworkouts', user && {
+      fetch('/.netlify/functions/pastworkouts', user && {
         cache: 'no-store',
         headers: {
           Authorization: `Bearer ${user.token.access_token}`
         }
       }).then(res => res.json()).then(data => {
+        console.log({data})
         setPastWorkouts(data)
       })
-    } 
+    } else {
+      setPastWorkouts([])
+    }
   }, [user, authReady])
 
   // Show a modal of a given workout which includes exercises

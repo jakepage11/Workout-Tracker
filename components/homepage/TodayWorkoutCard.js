@@ -5,8 +5,10 @@ import peopleIcon from "../../public/todayWorkoutIcons/People.svg"
 import timerIcon from "../../public/todayWorkoutIcons/Timer.svg"
 import StartWorkoutModal from "./StartWorkoutModal";
 import dayjs from "dayjs"
+import {useRouter} from "next/navigation"
 
 export default function TodayWorkoutCard({workout, handleStart, complete}) {
+  const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(() => {
     return false;
   })
@@ -50,6 +52,11 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
     return Math.round(workout.progress * 100 / totalSets)
   }
 
+  // Set the URL to the Edit Workout page of this given workout
+  function handleEditWorkout() {
+    router.push(`/edit-workout/${workout._id}`)
+  }
+
   return (
     <div className={classes.contentContainer}
         onClick={() => {setShowConfirm(true)}}>
@@ -61,7 +68,8 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
                       currSet={setNum}
                       exNumSets={exNumSets}
                       handleStart={handleStart}
-                      handleCancel={handleCloseModal}/>
+                      handleCancel={handleCloseModal}
+                      handleEdit={handleEditWorkout}/>
       }
       <div className={classes.typeNameContainer}>
         <h3 className={classes.typeHeader}>

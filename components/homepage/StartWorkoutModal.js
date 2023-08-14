@@ -1,9 +1,10 @@
 import { createPortal } from "react-dom";
 import { useRef, useEffect } from "react"
 import classes from "./StartWorkoutModal.module.css"
+import CloseIcon from "../ui/CloseIcon"
 
 export default function StartWorkoutModal({type, percentProgress, exName, currSet, 
-                                            duration, exNumSets, handleStart, handleCancel}) {
+                                            duration, exNumSets, handleStart, handleCancel, handleEdit}) {
 
   ////// Progress bar stuff ////////////////
   const progressBarRef = useRef()
@@ -29,6 +30,11 @@ export default function StartWorkoutModal({type, percentProgress, exName, currSe
     e.stopPropagation();
     handleStart();
   }
+
+  function handleEditLocal(e) {
+    e.stopPropagation();
+    handleEdit();
+  }
   ////////////////////////////////////////////////////////////
 
   return createPortal (
@@ -36,6 +42,7 @@ export default function StartWorkoutModal({type, percentProgress, exName, currSe
       <div className={classes.background}></div>
       
       <div className={classes.contentContainer}>
+        <CloseIcon handleClose={handleCancel} width={"30px"} color={"white"}/>
           <h2>
             {type} Workout
           </h2>
@@ -73,8 +80,8 @@ export default function StartWorkoutModal({type, percentProgress, exName, currSe
               {percentProgress !== undefined ? "Continue" : "Start"}
           </button>
           <p className={classes.cancelBtn}
-              onClick={(e) => handleCancelLocal(e)}>
-            Cancel
+              onClick={(e) => handleEditLocal(e)}>
+            Edit
           </p>
       </div>
     </div>,

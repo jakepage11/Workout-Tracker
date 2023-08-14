@@ -1,4 +1,3 @@
-
 const dayjs = require("dayjs")
 const {MongoClient} = require("mongodb")
 
@@ -30,6 +29,4 @@ exports.handler = async(event, context) => {
       statusCode: 500,
     }
   }
-
-  
 }

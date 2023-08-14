@@ -31,14 +31,14 @@ export default function InWorkoutWrapper({params}) {
 
   console.log({currWorkout})
   console.log({hasAccess})
- 
+
   return (
-    <>
+    <div className='background'>
     {/* Only display the in-workout content for the correct user */}
      {hasAccess && <div>
         <InWorkoutContent workout={currWorkout} exDescrs={exDescr}/>
       </div>}
-    </>
+    </div>
    
     
   )
