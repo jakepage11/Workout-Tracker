@@ -233,7 +233,6 @@ export default function InWorkoutContent({workout, exDescrs}) {
 
   // Saves workout user data and exits to the home page
   async function submitWorkout() {
-    console.log({currWorkout})
     const res = await fetch("/.netlify/functions/finish-workout", {
       method: 'POST',
       body: JSON.stringify({...currWorkout}),

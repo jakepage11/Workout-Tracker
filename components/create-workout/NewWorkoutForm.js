@@ -105,7 +105,7 @@ export default function NewWorkoutForm({workout, workoutTypes, allExercises}) {
         })
 
       }
-      // router.push("/");
+      router.replace("/");
     } else {
       login();
     }

@@ -7,13 +7,13 @@ import { useState } from "react"
 import { nanoid } from "nanoid"
 
 // Home page component that displays short info about upcoming workouts
-export default function WorkoutCard({workout, handlePreview}) {
+export default function WorkoutCard({workout, handlePreview, color}) {
   const dayJsDate = dayjs.utc(workout.date);
   const formatDate = dayJsDate.format('M-DD');
   const firstThree = [...workout.exercises].splice(0, 3);
   
   return (
-    <div className={classes.card} onClick={handlePreview}>
+    <div className={classes.card} onClick={handlePreview} style={{backgroundColor: color}}>
       {/* Type and date */}
       <div className={classes.typeDateBox}>
         <h3 className={classes.typeHeader}>

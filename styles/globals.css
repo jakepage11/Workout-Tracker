@@ -6,6 +6,10 @@
   font-weight: 500;
 }
 
+body {
+  /* height: -webkit-fill-available; */
+}
+
 button {
   background-color: #FF5C55;
   color: white;

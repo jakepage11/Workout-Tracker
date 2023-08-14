@@ -1,8 +1,8 @@
+
 .backdrop {
   background-color: #141349;
   color: white;
   width: 100vw;
   height: calc(100vh - 100px);
-  /* margin: 0;
-  padding: 0; */
+  overflow: hidden;
 }

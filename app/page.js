@@ -22,7 +22,7 @@ export default function HomePage() {
 
   const [showWorkout, setShowWorkout] = useState(() => {return false});
   // currWorkout: Index of the workout that is being displayed in the modal
-  const [currWorkout, setCurrWorkout] = useState(() => {return {}});
+  const [modalCurrWorkout, setModalCurrWorkout] = useState(() => {return {}});
   const [workoutToday, setWorkoutToday] = useState(() => {return false})
   const [workouts, setWorkouts] = useState([])
   const [pastWorkouts, setPastWorkouts] = useState([])
@@ -86,14 +86,20 @@ export default function HomePage() {
   // Show a modal of a given workout which includes exercises
   // with weight, reps.
   function previewWorkout(workoutIndex) {
-    setCurrWorkout(workoutIndex);
+    setModalCurrWorkout(workouts[workoutIndex]);
     // setCurrWorkout(props.workouts[workoutIndex]);
     setShowWorkout(true);
   }
 
+  // Displays a modal
+  function viewPastWorkout(index) {
+    setModalCurrWorkout(pastWorkouts[index])
+    setShowWorkout(true)
+  }
+
   // Handles closing the preview window of a workout
   function closePreview() {
-    setCurrWorkout({});
+    setModalCurrWorkout(null);
     setShowWorkout(false);
   }
   
@@ -109,7 +115,7 @@ export default function HomePage() {
   });
   // Map each previous workout to a PastWorkoutCard
   const pastCards = pastWorkouts.map((w, index) => {
-    return <PastWorkoutCard key={`past-workout-${index}`} workout={w}/>
+    return <WorkoutCard key={`past-workout-${index}`} color={'#D9D9D9'} workout={w} handlePreview={() => viewPastWorkout(index)}/>
   })
 
   // TODO: Add implementation that will handle whether "Start Workout"
@@ -180,8 +186,8 @@ export default function HomePage() {
           </div>
         </div>
         {showWorkout && 
-          <ViewWorkout workoutProp={workouts[currWorkout]}
-                      handleClose={() => {setShowWorkout(false)}}/>
+          <ViewWorkout workoutProp={modalCurrWorkout}
+                      handleClose={closePreview}/>
         }
     </div>
   )
