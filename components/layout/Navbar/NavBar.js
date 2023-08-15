@@ -1,9 +1,10 @@
 'use client'
 import classes from "./NavBar.module.css"
 import Link from "next/link"
-import ndaLogo from "../../public/logos/NDA_logo.svg"
+import ndaLogo from "../../../public/logos/NDA_logo.svg"
 import AuthContext from "@/stores/authContext"
 import { useContext } from "react"
+import ProfileIcon from "./ProfileIcon"
 
 export default function NavBar() {
   const {user, login, logout} = useContext(AuthContext);
@@ -18,7 +19,7 @@ export default function NavBar() {
                   className={classes.logoImg}/>
             </Link>
             <h1>
-              No Days Absent
+              Movementum
             </h1>
           </div>
           <div className={classes.tabLinksContainer}>
@@ -29,12 +30,8 @@ export default function NavBar() {
               </Link>
               
             </div>
-            {!user && <button className="style-btn" onClick={login}>
-                Login
-            </button>}
-            {user && <button className="style-btn" onClick={logout}>
-                Logout
-            </button>}
+            {/* TODO: Add the Profile icon picture */}
+            <ProfileIcon />
           </div>
       </nav>
     </div>

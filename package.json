@@ -29,8 +29,11 @@
     "urix": "^0.1.0"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.15",
     "dotenv": "^16.3.1",
     "eslint-config-next": "^13.4.12",
-    "netlify-cli": "^15.9.1"
+    "netlify-cli": "^15.9.1",
+    "postcss": "^8.4.27",
+    "tailwindcss": "^3.3.3"
   }
 }

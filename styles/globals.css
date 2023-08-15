@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed&display=swap');
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 * {
   margin: 0;
@@ -6,8 +9,8 @@
   font-weight: 500;
 }
 
-body {
-  /* height: -webkit-fill-available; */
+h1 {
+  font-size: 30px;
 }
 
 button {
