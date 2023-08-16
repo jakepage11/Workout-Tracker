@@ -80,7 +80,7 @@ export default function ViewWorkout({workoutProp, handleClose}) {
   const date = dayjs.utc(workoutProp.date).format('M-DD') 
 
   return mounted ? createPortal (
-    <> 
+    <div> 
       <div className={classes.overlay}> </div>
       <div className={classes.container}>
         <h2 className={classes.title}>{workoutProp.type} {date}</h2>
@@ -90,11 +90,12 @@ export default function ViewWorkout({workoutProp, handleClose}) {
         <div className={classes.closeBtn} onClick={handleClose}>
           <CloseIcon style={{fontSize: "40px"}}/>
         </div>
-        <button className={classes.editBtn}
-                onClick={handleEditWorkout}>Edit</button>
+        {/* Only edit if the workout hasn't been completed */}
+        {workout.completeIn === "" && <button className={classes.editBtn}
+                onClick={handleEditWorkout}>Edit</button>}
       </div>
       
-    </>, 
+    </div>, 
     document.getElementById("portal-root")
   ) : null
 }

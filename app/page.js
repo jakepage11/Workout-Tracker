@@ -63,6 +63,7 @@ export default function HomePage() {
         })
       } else {
         setWorkouts([])
+        setWorkoutToday(false)
       }
   }, [user, authReady])
 

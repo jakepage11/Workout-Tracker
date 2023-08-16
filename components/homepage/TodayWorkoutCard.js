@@ -1,4 +1,3 @@
-import classes from "./TodayWorkout.module.css"
 import { useState } from "react";
 import locationIcon from "../../public/todayWorkoutIcons/location.svg"
 import peopleIcon from "../../public/todayWorkoutIcons/People.svg"
@@ -58,7 +57,7 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
   }
 
   return (
-    <div className={classes.contentContainer}
+    <div className='bg-[#141349] text-white h-[175px] md:w-[300px] sm:w-[200px] rounded-2xl relative px-5 hover:scale-110 cursor-pointer'
         onClick={() => {setShowConfirm(true)}}>
       {showConfirm && /*!complete &&*/
         <StartWorkoutModal type={workout.type} 
@@ -71,29 +70,31 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
                       handleCancel={handleCloseModal}
                       handleEdit={handleEditWorkout}/>
       }
-      <div className={classes.typeNameContainer}>
-        <h3 className={classes.typeHeader}>
+      {/* Workout type and time */}
+      <div className="flex justify-between items-baseline py-7">
+        <h3 className="text-5xl">
           {workout.type}
         </h3>
-        <h4 className={classes.timeOfDayHeader}>
+        <h4 className="text-2xl">
           {dateStr}
         </h4>
       </div>
-      <div className={classes.bottomContainer}>
+      {/* Location, users, and time */}
+      <div className="flex gap-6 align-baseline absolute bottom-4">
         {/* location */}
-        <div className={classes.bottomInnerDivs}>
+        <div className="flex gap-1 items-center">
           <img src={locationIcon.src} alt="location" />
           <label>
             location
           </label>
         </div>
         {/* People if needed */}
-        <div className={classes.bottomInnerDivs}>
+        <div className="flex gap-1 items-center">
            <img src={peopleIcon.src} alt="people" />
           <label>me</label>
         </div>
         {/* Estimated time */}
-        <div className={classes.bottomInnerDivs}>
+        <div className="flex gap-1 items-center">
         <img src={timerIcon.src} alt="timer" />
           <label>-1 min</label>
         </div>

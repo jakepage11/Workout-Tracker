@@ -12,10 +12,6 @@
   scale: 1.1;
 }
 
-.card > * {
-  margin-left: 100px;
-}
-
 .typeDateBox {
   margin-top: 20px;
   margin-left: 10px;
@@ -58,9 +54,5 @@
 
 .icons {
   color: black;
-}
-
-.bottomContainer {
-  /* ma */
 }
 

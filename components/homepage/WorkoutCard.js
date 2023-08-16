@@ -1,5 +1,4 @@
 import classes from "./WorkoutCard.module.css";
-import todayClasses from "./TodayWorkout.module.css"
 import * as dayjs from "dayjs";
 import peopleIcon from "../../public/todayWorkoutIcons/PeopleB.svg"
 import timerIcon from "../../public/todayWorkoutIcons/TimerB.svg"
@@ -27,19 +26,19 @@ export default function WorkoutCard({workout, handlePreview, color}) {
       <div className={classes.exercises}>
         {firstThree.map((ex) => {return <h4 key={nanoid()}>{ex.name}</h4>})}
       </div>
-      <div className={todayClasses.bottomContainer}>
+      {/* People & Time  */}
+      <div className="flex items-baseline gap-6 absolute bottom-4 px-4">
         {/* People if needed */}
-        <div className={todayClasses.bottomInnerDivs}>
+        <div className="flex gap-1">
            <img src={peopleIcon.src} alt="people" />
           <label>me</label>
         </div>
         {/* Estimated time */}
-        <div className={todayClasses.bottomInnerDivs}>
-        <img src={timerIcon.src} alt="timer" className={classes.icons}/>
+        <div className="flex gap-1">
+          <img src={timerIcon.src} alt="timer" className={classes.icons}/>
           <label>55 min</label>
         </div>
       </div>
-      
     </div>
   )
 }

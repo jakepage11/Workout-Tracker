@@ -30,8 +30,10 @@ export default function NavBar() {
               </Link>
               
             </div>
-            {/* TODO: Add the Profile icon picture */}
-            <ProfileIcon />
+            {/* Add the Profile icon picture if the user is logged in */}
+            {user && <ProfileIcon />}
+            {/* Add login button otherwise */}
+            {!user && <button className="bg-[#141349] px-1 py-2 text-lg w-fit" onClick={login}>Login</button>}
           </div>
       </nav>
     </div>
