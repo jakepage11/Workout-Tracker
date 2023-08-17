@@ -1,4 +1,4 @@
-import "../styles/globals.css"
+import "/styles/globals.css"
 import Layout from "../components/layout/Layout"
 import { AuthContextProvider } from "@/stores/authContext"
 
