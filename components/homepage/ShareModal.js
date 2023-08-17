@@ -45,11 +45,11 @@ export default function ShareModal({workout, closeModal}) {
 
 async function getUsers(user) {
   // TODO: Make fetch call to get all users in the netlify database
-  // await fetch('/.netlify/functions/list-users', {
-  //   method: 'GET',
-  //   headers: {
-  //     Authorization: `Bearer ${user.token.access_token}`,
-  //     'Content-Type': 'application/json'
-  //   }
-  // })
+  await fetch('/.netlify/functions/list-users', {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${user.token.access_token}`,
+      'Content-Type': 'application/json'
+    }
+  })
 }

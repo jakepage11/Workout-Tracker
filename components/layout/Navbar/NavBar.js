@@ -6,7 +6,7 @@ import AuthContext from "@/stores/authContext"
 import { useContext } from "react"
 import ProfileIcon from "./ProfileIcon"
 
-export default function NavBar() {
+export default function NavBar({showDropdown}) {
   const {user, login, logout} = useContext(AuthContext);
 
   return (

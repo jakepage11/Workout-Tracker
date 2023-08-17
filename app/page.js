@@ -126,7 +126,6 @@ export default function HomePage() {
     router.push(`/in-workout/${todayData._id}`)
   }
 
-
   return (
     <div className={classes.body}>
         <div className={classes.nextWorkoutContainer}>
