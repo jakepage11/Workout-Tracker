@@ -5,12 +5,15 @@ import timerIcon from "../../public/todayWorkoutIcons/Timer.svg"
 import StartWorkoutModal from "./StartWorkoutModal";
 import dayjs from "dayjs"
 import {useRouter} from "next/navigation"
+import { Share } from "@mui/icons-material";
+import ShareModal from './ShareModal'
 
 export default function TodayWorkoutCard({workout, handleStart, complete}) {
   const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(() => {
     return false;
   })
+  const [showShare, setShowShare] = useState(() => {false})
 
   function handleCloseModal() {
     setShowConfirm(prevState => !prevState);
@@ -99,6 +102,10 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
           <label>-1 min</label>
         </div>
       </div>
+      <Share className="absolute bottom-3 right-2 hover:scale-150" 
+            onClick={(e) => {e.stopPropagation(); setShowShare(true)}}/>
+      {showShare && <ShareModal workout={workout} 
+                    closeModal={(e) => {e.stopPropagation(); setShowShare(prevState => !prevState)}}/>}
     </div>
   )
 }
