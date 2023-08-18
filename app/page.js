@@ -1,14 +1,12 @@
 'use client'
 import WorkoutCard from "@/components/homepage/WorkoutCard"
-import classes from "../styles/homepage.module.css"
-// import clientPromise from "@/lib/mongodb"
+import classes from "./homepage.module.css"
 import * as dayjs from 'dayjs';
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 import {nanoid} from "nanoid"
 import ViewWorkout from "@/components/homepage/ViewWorkout"
 import TodayWorkoutCard from "@/components/homepage/TodayWorkoutCard"
-import PastWorkoutCard from "@/components/homepage/PastWorkoutCard"
 import { CheckCircle } from "@mui/icons-material";
 import AuthContext from "@/stores/authContext";
 

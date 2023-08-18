@@ -38,7 +38,4 @@ exports.handler = async(event, context) => {
       statusCode: 500
     }
   }
-  return {
-    statusCode: 201
-  }
 }

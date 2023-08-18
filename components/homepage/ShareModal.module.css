@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed&family=Montserrat&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed&family=Montserrat&display=swap'); */
 
 .contentContainer {
   display: flex;
@@ -18,5 +18,5 @@
 
 .contentContainer > * {
   font-weight: 400;
-  font-family: 'Montserrat', sans-serif;
+  /* font-family: 'Montserrat', sans-serif; */
 }
