@@ -11,15 +11,13 @@ module.exports = {
       'lg': '800px',
       'xl': '1000px'
     },
-    extends: {
+    extend: {
       colors: {
         'pink': '#FFBAB7',
         'blue': '#141349',
         'gray': '#D9D9D9'
       }
     },
-    extend: {},
   },
   plugins: [],
 }
-
