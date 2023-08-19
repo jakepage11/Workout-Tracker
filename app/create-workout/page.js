@@ -23,7 +23,6 @@ export default async function CreateWorkoutPage() {
         <div className={classes.testDiv}>
           Ex Search to be implemented soon...
         </div>
-
         <div className={classes.formContainer}>
           <NewWorkoutForm 
                     workoutTypes={types}
