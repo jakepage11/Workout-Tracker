@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed&display=swap');
-@import "./styles.css";
+@import 'tailwindcss/base';
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 * {
   margin: 0;
@@ -18,38 +20,48 @@ button {
   cursor: pointer;
 }
 
-.inworkout-btns {
-  position: absolute;
-  width: 300px;
-  max-width: 80vw;
-  height: 5vh;
-  border-radius: 15px;
-  bottom: 4vh;
-  font-size: 1rem;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
+h1 {
+  font-size: 30px;
 }
 
-.style-btn {
-  background-color: white;
-  color: #141349;
-  border: solid 2px #141349;
-  width: 150px;
-  height: 45px;
-  font-size: 24px;
-}
-.style-btn:hover {
-  border: none;
-  background-color: #141349;
-  color: white;
+@layer components {
+  .inworkout-btns {
+    position: absolute;
+    width: 300px;
+    max-width: 80vw;
+    height: 5vh;
+    border-radius: 15px;
+    bottom: 4vh;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .style-btn {
+    background-color: white;
+    color: #141349;
+    border: solid 2px #141349;
+    width: 150px;
+    height: 45px;
+    font-size: 24px;
+  }
+  .style-btn:hover {
+    border: none;
+    background-color: #141349;
+    color: white;
+  }
+  
+  .closeIcon {
+    position: absolute;
+    top: 2px;
+    right: 5px;
+    cursor: pointer;
+  }
 }
 
-.closeIcon {
-  position: absolute;
-  top: 2px;
-  right: 5px;
-  cursor: pointer;
-}
+
+
+
 
 

@@ -1,8 +1,6 @@
-
 import classes from "./CreateWorkout.module.css"
 import NewWorkoutForm from "@/components/create-workout/NewWorkoutForm";
 import clientPromise from "@/lib/mongodb";
-// import ExSearch from "@/components/create-workout/ExSearch";
 
 export default async function CreateWorkoutPage() {
   const mongoClient = await clientPromise;
@@ -24,6 +22,7 @@ export default async function CreateWorkoutPage() {
           Ex Search to be implemented soon...
         </div>
         <div className={classes.formContainer}>
+          {/* <h1>Hello bros</h1> */}
           <NewWorkoutForm 
                     workoutTypes={types}
                     allExercises={exerciseList}
