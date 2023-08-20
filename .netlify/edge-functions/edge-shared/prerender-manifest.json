@@ -1,7 +1,1 @@
-{
-  "version": 3,
-  "routes": {},
-  "dynamicRoutes": {},
-  "notFoundRoutes": [],
-  "preview": {}
-}
+{"version":4,"routes":{"/api/all-exercises":{"initialHeaders":{"content-type":"application/json","x-next-cache-tags":"/api/all-exercises/route"},"initialRevalidateSeconds":false,"srcRoute":"/api/all-exercises","dataRoute":null},"/api/all-types":{"initialHeaders":{"content-type":"application/json","x-next-cache-tags":"/api/all-types/route"},"initialRevalidateSeconds":false,"srcRoute":"/api/all-types","dataRoute":null},"/":{"initialRevalidateSeconds":false,"srcRoute":"/","dataRoute":"/index.rsc"},"/create-workout":{"initialRevalidateSeconds":false,"srcRoute":"/create-workout","dataRoute":"/create-workout.rsc"}},"dynamicRoutes":{},"notFoundRoutes":[],"preview":{"previewModeId":"bce74741ce2205539fcb14b159cae21e","previewModeSigningKey":"6411cae5d4ce2ad0e1e03ef297055508cf4518602f2feff542b1248f5ece7114","previewModeEncryptionKey":"c912764140c8b960c4080602b4d5b557f83e9dd079e22e5b5b83dc156d2fd559"}}
