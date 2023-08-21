@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation"
 
 export default function TodayWorkoutCard({workout, handleStart, complete}) {
   const router = useRouter();
+  const [showShare, setShowShare] = useState(false)
   const [showConfirm, setShowConfirm] = useState(() => {
     return false;
   })
@@ -98,6 +99,8 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
           <label>-1 min</label>
         </div>
       </div>
+      {showShare && <ShareModal workout={workout} 
+                    closeModal={(e) => {e.stopPropagation(); setShowShare(prevState => !prevState)}}/>}
     </div>
   )
 }

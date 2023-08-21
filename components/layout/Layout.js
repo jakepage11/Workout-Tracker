@@ -1,4 +1,4 @@
-import NavBar from "./NavBar";
+import NavBar from "./Navbar/NavBar";
 import classes from "./Layout.module.css"
 import { AuthContextProvider } from "@/stores/authContext";
 

@@ -1,7 +1,6 @@
 'use client'
 import WorkoutCard from "@/components/homepage/WorkoutCard"
 import classes from "../styles/homepage.module.css"
-// import clientPromise from "@/lib/mongodb"
 import * as dayjs from 'dayjs';
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
