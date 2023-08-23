@@ -99,8 +99,8 @@ export default function TodayWorkoutCard({workout, handleStart, complete}) {
           <label>-1 min</label>
         </div>
       </div>
-      {showShare && <ShareModal workout={workout} 
-                    closeModal={(e) => {e.stopPropagation(); setShowShare(prevState => !prevState)}}/>}
+      {/* {showShare && <ShareModal workout={workout} 
+                    closeModal={(e) => {e.stopPropagation(); setShowShare(prevState => !prevState)}}/>} */}
     </div>
   )
 }
