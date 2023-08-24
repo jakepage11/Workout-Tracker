@@ -4,7 +4,6 @@ exports.handler = async (event, context) => {
   // Create the mongodb connection to access the users upcoming workouts
   const uri = process.env.MONGODB_URI
   const options = {}
-
   const mongoClient = new MongoClient(uri, options)
   const mongoConnection = await mongoClient.connect()
 

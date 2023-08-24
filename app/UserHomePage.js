@@ -31,6 +31,7 @@ export default function UserHomePage() {
   useEffect(() => {
     try {
       if (authReady && user) {
+        let plannedWorkouts = []
         const getPlannedWorkouts = async() => {
           const res = await fetch('/.netlify/functions/futureworkouts', user && {
             cache: 'no-store',
@@ -42,14 +43,14 @@ export default function UserHomePage() {
           if (!res.ok) {
             return [];
           }
-          return await res.json();
+          plannedWorkouts = await res.json();
         }
-        const plannedWorkouts = getPlannedWorkouts();
 
         // Convert requested data into array
         if (plannedWorkouts.length === 0) {
           setWorkoutToday(false)
         } else {
+          console.log({plannedWorkouts})
           const date1 = dayjs.utc(plannedWorkouts[0].date).format('YYYY-MM-DD');
           const date2 = dayjs().format('YYYY-MM-DD');
           const isToday = plannedWorkouts.length > 0 && date1 === date2
