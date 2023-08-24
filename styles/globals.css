@@ -3,6 +3,15 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+:root {
+  --light-pink: #FFBAB7;
+  --pink: #FF5C55;
+  --blue: #141349;
+  --light-blue: #E0DFFF;
+  --gray: #D9D9D9;
+  --navbar-height: 100px;
+}
+
 * {
   margin: 0;
   font-family: 'Barlow Condensed', sans-serif;

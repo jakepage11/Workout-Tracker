@@ -1,0 +1,22 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed&family=Montserrat&display=swap'); */
+
+.contentContainer {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  align-items: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 350px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  background-color: #d9d9d9;
+  z-index: 1000;
+  border-radius: 10px;
+}
+
+.contentContainer > * {
+  font-weight: 400;
+  /* font-family: 'Montserrat', sans-serif; */
+}

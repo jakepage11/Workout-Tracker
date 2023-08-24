@@ -5,6 +5,18 @@
   margin: auto;
 }
 
+.loggedoutBackground {
+  background-color: var(--light-blue);
+  width: 100%;
+  height: calc(100vh - var(--navbar-height));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.loggedoutMessage {
+  font-size: 60px;
+}
+
 .nextWorkoutContainer {
   margin-top: 5vh;
 }
