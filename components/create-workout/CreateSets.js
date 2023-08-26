@@ -10,8 +10,6 @@ import SearchName from "../queries/SearchName";
 
 export default function CreateSets({ex, handleName, index, 
                                     handleClose, allExercises, handleUpdate}) {
-  console.log({ex});
-
   // Add sets if there aren't any already
   if (ex.reps.length === 0) {
     ex.reps.push("");
@@ -67,13 +65,11 @@ export default function CreateSets({ex, handleName, index,
 
   // Saves the sets to the given exercise
   function saveExercises() {
-    console.log('save')
     let deepCopy = JSON.parse(JSON.stringify(ex));
     // Delete any sets that are empty
     for (let i = 0; i < ex.reps.length; i++) {
       if (deepCopy.reps[i] === "" || deepCopy.load[i] === "") {
         // remove the empty sets
-        console.log("removed");
         deepCopy.reps.splice(i, 1);
         deepCopy.load.splice(i, 1);
         i--;
