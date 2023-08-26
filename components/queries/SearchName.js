@@ -7,7 +7,6 @@ import {nanoid} from 'nanoid'
 import SearchResults from "./SearchResults";
 
 export default function SearchName({name, allItems, handleNameChange, index}) {
-  console.log({name})
   const [filteredExs, setFilteredExs] = useState(() => {
     return [];
   });
@@ -38,7 +37,6 @@ export default function SearchName({name, allItems, handleNameChange, index}) {
   }
 
   // TODO: Allow user to add an exercise that doesn't show up in the database
-
   return (
     <div className={classes.container}>
       <input  type="search"

@@ -7,9 +7,7 @@ import styles from "./NavBar.module.css"
 
 export default function ProfileIcon() {
   const {user} = useContext(AuthContext)
-  console.log({user})
   const [showModal, setShowModal] = useState(() => {return false})
-  console.log({showModal})
   return (
     <div className={styles.profileIcon}>
       <Image src='https://sketchok.com/images/articles/01-cartoons/000-va/24/08.jpg' 
