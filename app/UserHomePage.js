@@ -27,6 +27,8 @@ export default function UserHomePage({user, authReady}) {
 
   // Grab all upcoming workouts
   useEffect(() => {
+    console.log('grabbing workouts')
+    console.log({user})
     try { 
       const getPlannedWorkouts = async() => {
         let plannedWorkouts = []
@@ -37,6 +39,7 @@ export default function UserHomePage({user, authReady}) {
             Authorization: `Bearer ${user.token.access_token}`
           }
         });
+        console.log(res.ok)
         // TODO: possibly at res.ok check here
         plannedWorkouts = await res.json();
       
@@ -61,7 +64,7 @@ export default function UserHomePage({user, authReady}) {
       }
       getPlannedWorkouts();
     } catch (err) {
-      // console.log(err)
+      console.log(err)
       setWorkouts([])
       setWorkoutToday(false)
     }
@@ -69,6 +72,7 @@ export default function UserHomePage({user, authReady}) {
 
   // TODO: Grab past workouts
   useEffect(() => {
+    console.log({user})
     try {
       const getPastWorkouts = async () => {
         let pastworkouts = []
@@ -86,10 +90,14 @@ export default function UserHomePage({user, authReady}) {
       }
       getPastWorkouts();
     } catch(err) {
-      // console.log({err});
+      console.log({err});
       setPastWorkouts([]);
     }
   }, [user, authReady])
+
+  useEffect(() => {
+
+  }, [])
 
   // Show a modal of a given workout which includes exercises
   // with weight, reps.
