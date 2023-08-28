@@ -2,21 +2,19 @@
 import WorkoutCard from "@/components/homepage/WorkoutCard"
 import classes from "../styles/homepage.module.css"
 import * as dayjs from 'dayjs';
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 import {nanoid} from "nanoid"
 import ViewWorkout from "@/components/homepage/ViewWorkout"
 import TodayWorkoutCard from "@/components/homepage/TodayWorkoutCard"
-import PastWorkoutCard from "@/components/homepage/PastWorkoutCard"
 import { CheckCircle } from "@mui/icons-material";
-import AuthContext from "@/stores/authContext";
+
 // TODO: Remove all the extra checks for user and authready
-export default function UserHomePage() {
+export default function UserHomePage({user, authReady}) {
   // Global variables
   const router = useRouter();
   const utc = require('dayjs/plugin/utc');
   dayjs.extend(utc);
-  const {user, authReady } = useContext(AuthContext)
 
   const [showWorkout, setShowWorkout] = useState(() => {return false});
   // currWorkout: Index of the workout that is being displayed in the modal

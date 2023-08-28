@@ -8,7 +8,7 @@ export default function HomePageWrapper() {
   const {user, authReady} = useContext(AuthContext)
   return (
     <>
-      {/* {user && authReady && <UserHomePage />} */}
+      {user && authReady && <UserHomePage user={user} authReady={authReady}/>}
       {(!user || !authReady) &&  
         <div className={styles.loggedoutBackground}>
           <h2>No Workouts: not logged in</h2>
