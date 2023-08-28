@@ -29,35 +29,27 @@ export default function UserHomePage() {
 
   // Grab all upcoming workouts
   useEffect(() => {
-    try {
-      if (authReady && user) {
+    try { 
+      const getPlannedWorkouts = async() => {
         let plannedWorkouts = []
-        const getPlannedWorkouts = async() => {
-          const res = await fetch('/.netlify/functions/futureworkouts', user && {
-            cache: 'no-store',
-            headers: {
-              Authorization: `Bearer ${user.token.access_token}`
-            }
-          });
-          // TODO: Later change the [] to null and give different content to user
-          if (!res.ok) {
-            return [];
+        let workouttoday = false;
+        const res = await fetch('/.netlify/functions/futureworkouts', user && {
+          cache: 'no-store',
+          headers: {
+            Authorization: `Bearer ${user.token.access_token}`
           }
-          plannedWorkouts = await res.json();
-        }
-
+        });
+        // TODO: possibly at res.ok check here
+        plannedWorkouts = await res.json();
+      
         // Convert requested data into array
-        if (plannedWorkouts.length === 0) {
-          setWorkoutToday(false)
-        } else {
-          console.log({plannedWorkouts})
+        if (plannedWorkouts.length > 0) {
           const date1 = dayjs.utc(plannedWorkouts[0].date).format('YYYY-MM-DD');
           const date2 = dayjs().format('YYYY-MM-DD');
-          const isToday = plannedWorkouts.length > 0 && date1 === date2
-          setWorkoutToday(isToday) 
+          workouttoday = plannedWorkouts.length > 0 && date1 === date2
           // Grab workout progress if started
-          if (isToday) {
-            fetch(`/.netlify/functions/inworkout?id=${plannedWorkouts[0]._id}`, {
+          if (workouttoday) {
+            await fetch(`/.netlify/functions/inworkout?id=${plannedWorkouts[0]._id}`, {
               cache: "no-store",
               headers: {
                 Authorization: `Bearer ${user.token.access_token}`
@@ -67,34 +59,39 @@ export default function UserHomePage() {
           } 
         }
         setWorkouts(plannedWorkouts)
+        setWorkoutToday(workouttoday)
       }
+      getPlannedWorkouts();
+    } catch (err) {
+      // console.log(err)
       setWorkouts([])
       setWorkoutToday(false)
-    } catch (err) {
-      console.log(err)
     }
   }, [user, authReady])
 
   // TODO: Grab past workouts
   useEffect(() => {
-    if (authReady && user) {
-      fetch('/.netlify/functions/pastworkouts', user && {
-        cache: 'no-store',
-        headers: {
-          Authorization: `Bearer ${user.token.access_token}`
+    try {
+      const getPastWorkouts = async () => {
+        let pastworkouts = []
+        const res = await fetch('/.netlify/functions/pastworkouts', user && {
+          cache: 'no-store',
+          headers: {
+            Authorization: `Bearer ${user.token.access_token}`
+          }
+        });
+        // Assign pastworkouts if request was allowed
+        if (res.ok) {
+          pastworkouts = await res.json();
         }
-      }).then(res => res.json()).then(data => {
-        console.log({data})
-        setPastWorkouts(data)
-      })
-    } else {
-      setPastWorkouts([])
+        setPastWorkouts(pastworkouts);
+      }
+      getPastWorkouts();
+    } catch(err) {
+      // console.log({err});
+      setPastWorkouts([]);
     }
   }, [user, authReady])
-
-  async function doNothing() {
-    return;
-  }
 
   // Show a modal of a given workout which includes exercises
   // with weight, reps.
