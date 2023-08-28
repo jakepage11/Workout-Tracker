@@ -63,7 +63,7 @@ export default function UserHomePage() {
       }
       getPlannedWorkouts();
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       setWorkouts([])
       setWorkoutToday(false)
     }
@@ -88,7 +88,7 @@ export default function UserHomePage() {
       }
       getPastWorkouts();
     } catch(err) {
-      console.log({err});
+      // console.log({err});
       setPastWorkouts([]);
     }
   }, [user, authReady])
