@@ -1,113 +1,191 @@
-import Image from 'next/image'
+'use client'
+// import WorkoutCard from "@/components/homepage/WorkoutCard"
+import styles from "./homepage.module.css"
+import dayjs from 'dayjs';
+import utc from "dayjs/plugin/utc"
+dayjs.extend(utc)
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation"
+import {nanoid} from "nanoid"
+// import ViewWorkout from "@/components/homepage/ViewWorkout"
+// import TodayWorkoutCard from "@/components/homepage/TodayWorkoutCard"
+// import { CheckCircle } from "@mui/icons-material";
+import { ObjectId } from "mongodb";
+import { type } from "os";
 
-export default function Home() {
+type Workout = {
+  _id: ObjectId,
+  user: string,
+  exercise: Array<Object>,
+  difficulty: number,
+  date: Date,
+  completeIn: number,
+}
+type WorkoutStarted = {
+  _id: ObjectId,
+  user: string,
+  exercise: Array<Object>,
+  difficulty: number,
+  date: Date,
+  completeIn: number,
+  progress: number,
+  startTime: Date,
+}
+
+// TODO: Remove all the extra checks for user and authready
+export default function UserHomePage() {
+  // Global variables
+  const router = useRouter();
+  const utc = require('dayjs/plugin/utc');
+  dayjs.extend(utc);
+
+  const [workoutToday, setWorkoutToday] = useState(null);
+
+
+  const [showWorkout, setShowWorkout] = useState(() => {return false});
+  // currWorkout: Index of the workout that is being displayed in the modal
+  const [modalCurrWorkout, setModalCurrWorkout] = useState(() => {return {}});
+  const [workouts, setWorkouts] = useState([])
+  const [pastWorkouts, setPastWorkouts] = useState([])
+  // Stores today's workout: inworkout version if it's already been started or regular if not
+  const [todayData, setTodayData] = useState({})
+  const [user, setUser] = useState(null)
+  const [authReady, setAuthReady] = useState(false)
+
+  // Grab all upcoming workouts
+  // useEffect(() => {
+    
+  // }, [user, authReady])
+
+  // TODO: Grab past workouts
+  // useEffect(() => {
+  //   console.log({user})
+  //   try {
+  //     const getPastWorkouts = async () => {
+  //       let pastworkouts = []
+  //       const res = await fetch('/.netlify/functions/pastworkouts', user && {
+  //         cache: 'no-store',
+  //         headers: {
+  //           Authorization: `Bearer ${user.token.access_token}`
+  //         }
+  //       });
+  //       // Assign pastworkouts if request was allowed
+  //       if (res.ok) {
+  //         pastworkouts = await res.json();
+  //       }
+  //       setPastWorkouts(pastworkouts);
+  //     }
+  //     getPastWorkouts();
+  //   } catch(err) {
+  //     console.log({err});
+  //     setPastWorkouts([]);
+  //   }
+  // }, [user, authReady])
+
+
+  // Show a modal of a given workout which includes exercises
+  // with weight, reps.
+  function previewWorkout(workoutIndex: number) {
+    setModalCurrWorkout(workouts[workoutIndex]);
+    // setCurrWorkout(props.workouts[workoutIndex]);
+    setShowWorkout(true);
+  }
+
+  // Displays a modal
+  function viewPastWorkout(index: number) {
+    setModalCurrWorkout(pastWorkouts[index])
+    setShowWorkout(true)
+  }
+
+  // Handles closing the preview window of a workout
+  function closePreview() {
+    // setModalCurrWorkout(null);
+    setShowWorkout(false);
+  }
+  
+  const workoutsToMap = JSON.parse(JSON.stringify(workouts))
+  if (workoutToday) {
+    // don't show today's workout under "Upcoming"
+    workoutsToMap.splice(0,1);
+  }
+
+  // Map Each workout to a Workout card
+  // const nextWorkouts = workoutsToMap.map((w: Workout, index: number) => {
+  //   return <WorkoutCard key={nanoid()} workout={w} handlePreview={() => previewWorkout(index)}/>
+  // });
+  // // Map each previous workout to a PastWorkoutCard
+  // const pastCards = pastWorkouts.map((w, index) => {
+  //   return <WorkoutCard key={`past-workout-${index}`} color={'#D9D9D9'} workout={w} handlePreview={() => viewPastWorkout(index)}/>
+  // })
+
+  // TODO: Add implementation that will handle whether "Start Workout"
+  // button should be displayed. And add the type of today's workout.
+  // function startWorkout() {
+  //   // Get the first workout in the props (this will be today's workout)
+  //   router.push(`/in-workout/${todayData._id}`)
+  // }
+
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <div className={styles.body}>
+        {/* Display Today's Workout if there is one */}
+        { workoutToday &&
+          <div>
+            <h1>Today's Workout</h1>
+          </div>
+        }
+        {/* Show upcoming workouts or message about creating them */}
+        <h1>Upcoming</h1>
+        {/* Show previous workouts from the past 2 weeks */}
+        <h1>Completed</h1>
+        {/* Display current goals and allow for adding and marking completed */}
+        <h1>Goals</h1>
+    </div>
   )
+}
+
+// Returns an array of all upcoming workouts for the current user. If the user
+// isn't logged in returns []
+async function getUpcomingWorkouts(user: any, authReady: any) {
+  if (!user || !authReady) {
+    return []
+  }
+  try { 
+    const res = await fetch('/.netlify/functions/futureworkouts', user && {
+      cache: 'no-store',
+      headers: {
+        Authorization: `Bearer ${user.token.access_token}`
+      }
+    });
+    const plannedWorkouts = await res.json();
+    return plannedWorkouts
+  } catch (err) {
+    console.log({err})
+  }
+}
+
+// Returns the workout progress of the given workout or null if no progress
+async function getWorkoutProgress(workout: Workout, user: any) {
+  // Convert requested data into array
+  try {
+    const date1 = dayjs.utc(workout.date).format('YYYY-MM-DD');
+    const date2 = dayjs().format('YYYY-MM-DD');
+    const workouttoday = date1 === date2
+    // Grab workout progress if started
+    if (workouttoday) {
+      const res = await fetch(`/.netlify/functions/inworkout?id=${workout._id}`, {
+        cache: "no-store",
+        headers: {
+          Authorization: `Bearer ${user.token.access_token}`
+        }
+      })
+      const progress = await res.json()
+      return progress
+    } else {
+      return null
+    }
+  } catch(err) {
+    console.log({err})
+  }
+  
 }
