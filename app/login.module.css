@@ -1,0 +1,16 @@
+.container {
+  @apply bg-[var(--blue)] h-screen flex flex-col items-center py-16 gap-6;
+}
+.container > p {
+  @apply text-white;
+}
+
+.input {
+  @apply flex flex-col gap-2;
+}
+.input > p {
+  @apply text-white text-[18px];
+}
+.input > input {
+  @apply rounded-[5px] h-[40px] w-[220px] text-[24px];
+}
