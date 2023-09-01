@@ -10,8 +10,6 @@ import {nanoid} from "nanoid"
 // import ViewWorkout from "@/components/homepage/ViewWorkout"
 // import TodayWorkoutCard from "@/components/homepage/TodayWorkoutCard"
 // import { CheckCircle } from "@mui/icons-material";
-import { ObjectId } from "mongodb";
-import { type } from "os";
 import {Workout, WorkoutStarted} from '../../types/types'
 import AuthContext from "@/stores/AuthContext";
 
@@ -125,7 +123,7 @@ export default function UserHomePage() {
         {/* Display Today's Workout if there is one */}
         { workoutToday &&
           <div>
-            <h1>Today's Workout</h1>
+            <h1>Today&apos;s Workout</h1>
           </div>
         }
         {/* Show upcoming workouts or message about creating them */}

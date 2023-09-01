@@ -6,9 +6,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
     <html lang="en">
       <body>
         {/* <AuthContextProvider> */}
-          {/* <Layout> */}
             {children}
-          {/* </Layout> */}
           <div id="portal-root"></div>
         {/* </AuthContextProvider> */}
       </body>

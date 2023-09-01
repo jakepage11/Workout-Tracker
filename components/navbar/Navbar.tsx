@@ -1,8 +1,8 @@
 'use client'
 import styles from "./NavBar.module.css"
 import Link from "next/link"
-import mainlogo from "../../../public/main_logo.png"
-import titlelogo from "../../../public/Long_logo.png"
+import mainlogo from "../../public/main_logo.png"
+import titlelogo from "../../public/Long_logo.png"
 // import AuthContext from "@/stores/authContext"
 // import { useContext } from "react"
 // import ProfileIcon from "./ProfileIcon"
