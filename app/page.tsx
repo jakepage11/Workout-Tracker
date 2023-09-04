@@ -1,7 +1,6 @@
 'use client'
 import main_logo from "@/public/main_logo.png"
 import styles from "./login.module.css"
-import auth from "@/stores/GoTrueAuth"
 import { useState } from "react"
 import { ToggleOff, ToggleOn } from "@mui/icons-material"
 import { redirect } from "next/navigation"
@@ -11,21 +10,9 @@ export default function LoginPage() {
   const [password, setPassword] = useState(() => {return ""})
   const [remember, setRemember] = useState(() => {return false})
   // redirect to dashboard if already logged in
-  if (auth.currentUser()) {
-    redirect("/dashboard")
-  }
 
   const login = () => {
     console.log("login")
-    // auth.login(email, password, remember)
-    //   .then((response) => {
-    //     console.log(`Success! Response: ${JSON.stringify({ response })}`);
-    //   })
-    //   .catch((error) => console.log(`Failed :( ${JSON.stringify(error)}`,));
-    // // reset all values
-    // setPassword("")
-    // setEmail("")
-    // setRemember(false)
   }
 
   return (

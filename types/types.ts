@@ -1,9 +1,9 @@
 import { ObjectId } from "mongodb"
 
 export type Workout = {
-  _id: ObjectId,
+  _id: string,
   user: string,
-  exercise: Array<Object>,
+  exercises: Array<Object>,
   difficulty: number,
   date: Date,
   completeIn: number,
@@ -12,7 +12,7 @@ export type Workout = {
 export type WorkoutStarted = {
     _id: ObjectId,
     user: string,
-    exercise: Array<Object>,
+    exercises: Array<Object>,
     difficulty: number,
     date: Date,
     completeIn: number,

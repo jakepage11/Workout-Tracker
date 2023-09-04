@@ -8,7 +8,6 @@ import titlelogo from "../../public/Long_logo.png"
 // import ProfileIcon from "./ProfileIcon"
 
 export default function NavBar() {
-  // const {user, login, logout} = useContext(AuthContext);
 
   return (
     <div className={styles.main}>
@@ -25,10 +24,9 @@ export default function NavBar() {
               </Link>
               
             </div>
-            {/* {!user && <button className="style-btn" onClick={login}>
-                Login
-            </button>}
-            {user && <ProfileIcon />} */}
+            {/* Logout button */}
+            <button className={styles.logoutBtn}>Log in</button>
+            
           </div>
       </nav>
     </div>
