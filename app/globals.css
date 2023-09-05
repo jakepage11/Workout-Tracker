@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,6 +10,10 @@
   --gray: #D9D9D9;
   --pink: #FF5C55;
   --navbar-height: 100px;
+}
+
+* {
+  font-family: Montserrat, sans-serif
 }
 
 h1 {

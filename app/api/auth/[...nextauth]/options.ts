@@ -2,13 +2,14 @@ import type { NextAuthOptions } from 'next-auth'
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import connectToDatabase from '@/lib/mongo'
-import Users from '@/lib/models/Users'
+import User from '@/lib/models/User'
+import { redirect } from 'next/navigation'
 
 export const options:NextAuthOptions = {
   providers: [
     GoogleProvider({
-      clientId: "" as string,
-      clientSecret: "" as string,
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
     // CredentialsProvider({
     //   name: "Credentials",
@@ -16,19 +17,55 @@ export const options:NextAuthOptions = {
     //     email: { label: "Username", type: "text", placeholder: ""},
     //     password: { label: "Password", type: "password"},
     //   },
-      // function to validate credentials
-      // async authorize(credentials, req) {
-      //   connectToDatabase()
-      //   // Find the user with the given email
-      //   try {
-      //     const user = Users.findOne({email: credentials?.email})
-      //     return user // either null or the user's information
-      //   } catch (err) {
-      //     console.log({err})
-      //     return null;
-      //   }
-      // }
+    //   // function to validate credentials
+    //   async authorize(credentials, req) {
+    //     // Find the user with the given email
+    //     try {
+    //       await connectToDatabase()
+    //       const user = await Users.findOne({email: credentials?.email})
+    //       const userObj = JSON.parse(JSON.stringify(user))
+    //       if (userObj) {
+    //         // Check that password is valid
+    //         if (userObj.password === credentials?.password) {
+    //           return userObj
+    //         }
+    //         return null
+    //       }
+         
+    //       return null
+    //     } catch (err) {
+    //       console.log({err})
+    //       return null
+    //     }
+    //   }
     // })
   ],
-  
+  callbacks: {
+    async session({session}) {
+      await connectToDatabase()
+      // Attach the user id to the session user
+      const sessionUser = await User.findOne({email: session?.user?.email})
+      const sessionWithId = {...session, user: {...session.user, id: sessionUser._id.valueOf()}}
+      return sessionWithId
+    },
+    async signIn({ profile }) {
+      await connectToDatabase()
+      // Create the user if account is new
+      try {
+        console.log({profile})
+        const user = await User.findOne({email: profile?.email})
+        if (!user) {
+          User.create({email: profile?.email, name: profile?.name, image: (profile as {picture: string}).picture})
+        }
+        // TODO: Send user to dashboard
+        return true
+      } catch (err) {
+        console.log({err})
+        return false
+      }
+    }
+  },
+  pages: {
+    signIn: "/login",
+  },
 }

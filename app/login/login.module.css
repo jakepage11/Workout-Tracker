@@ -1,5 +1,5 @@
 .container {
-  @apply bg-[var(--blue)] h-screen flex flex-col items-center pt-16 gap-6;
+  @apply bg-[var(--blue)] flex flex-col items-center py-16 gap-6;
 }
 .container > p {
   @apply text-white;
