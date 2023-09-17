@@ -11,34 +11,35 @@ export const options:NextAuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
-    // CredentialsProvider({
-    //   name: "Credentials",
-    //   credentials: {
-    //     email: { label: "Username", type: "text", placeholder: ""},
-    //     password: { label: "Password", type: "password"},
-    //   },
-    //   // function to validate credentials
-    //   async authorize(credentials, req) {
-    //     // Find the user with the given email
-    //     try {
-    //       await connectToDatabase()
-    //       const user = await Users.findOne({email: credentials?.email})
-    //       const userObj = JSON.parse(JSON.stringify(user))
-    //       if (userObj) {
-    //         // Check that password is valid
-    //         if (userObj.password === credentials?.password) {
-    //           return userObj
-    //         }
-    //         return null
-    //       }
-         
-    //       return null
-    //     } catch (err) {
-    //       console.log({err})
-    //       return null
-    //     }
-    //   }
-    // })
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Username", type: "text", placeholder: ""},
+        password: { label: "Password", type: "password"},
+      },
+      // function to validate credentials
+      async authorize(credentials, req) {
+        // Find the user with the given email
+        try {
+          await connectToDatabase()
+          const user = await User.findOne({email: credentials?.email})
+          const userObj = JSON.parse(JSON.stringify(user))
+          // Check that password is valid if we found a user
+          if (userObj && userObj.password === credentials?.password) {
+              return userObj
+          } else if (!userObj) {
+            // Create the new user
+            User.create({
+              email: credentials?.email,
+            })
+          }
+          return null
+        } catch (err) {
+          console.log({err})
+          return null
+        }
+      }
+    })
   ],
   callbacks: {
     async session({session}) {
@@ -67,5 +68,6 @@ export const options:NextAuthOptions = {
   },
   pages: {
     signIn: "/login",
+    signOut: `${process.env.DEV_URL}/api/auth/signout`,
   },
 }

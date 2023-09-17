@@ -4,18 +4,35 @@ import styles from "./login.module.css"
 import { useState } from "react"
 import { ToggleOff, ToggleOn } from "@mui/icons-material"
 import GoogleBtn from "@/components/login/GoogleBtn"
+import { signIn, signOut, useSession } from "next-auth/react"
+import CurrentUser from "@/components/login/CurrentUser"
+import { options } from "../api/auth/[...nextauth]/options"
 
 export default function LoginPage() {
   const [email, setEmail] = useState(() => {return ""})
   const [password, setPassword] = useState(() => {return ""})
   const [remember, setRemember] = useState(() => {return false})
+  const session = useSession()
+  const isAuthenticated = session.status === 'authenticated'
+ 
+  const credentialsLogin = () => {
+    signIn('Credentials', { email, password })
+  }
 
   return (
     <div className={styles.container}>
       <h1 className="text-white text-[40px] font-semibold">Log-in to Momentum</h1>
       <img src={main_logo.src} className="w-[50px]"/>
+      {/* Current User */}
+      { isAuthenticated && 
+        <div className="text-white flex-col flex items-center">
+          <CurrentUser />
+          <p className="text-sm cursor-pointer hover:underline" onClick={() => signOut()}>Logout</p>
+          <hr className="w-[250px] mt-4"></hr>
+        </div>
+     }
       {/* Google Login */}
-      <GoogleBtn />
+      <GoogleBtn text="Sign in with Google" width={240}/>
       {/* Email and password */}
       <div className={styles.input}>
         <p>Email or username</p>
@@ -39,7 +56,7 @@ export default function LoginPage() {
       </button>
       <p className="hover: cursor-pointer" onClick={() => console.log("reset password")}>Forgot your password?</p>
       <hr></hr>
-      <p>New user?<u>Sign up here</u></p>
+      {/* <p>New user? <u>Sign up here</u></p> */}
     </div>
   )
 }

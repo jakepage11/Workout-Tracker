@@ -13,6 +13,12 @@ const userSchema = new Schema({
   },
   image: {
     type: String
+  },
+  password: {
+    type: String,
+  }, 
+  provider: {
+    type: String,
   }
 })
 

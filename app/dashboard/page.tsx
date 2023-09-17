@@ -4,7 +4,7 @@ import { options } from "../api/auth/[...nextauth]/options"
 export default async function HomePage() {
   const session = await getServerSession(options)
   const user = session?.user
-  await getUpcomingWorkouts((user as {id: string})?.id )
+  // await getUpcomingWorkouts((user as {id: string})?.id )
   return (
     <div>
       hi
@@ -19,7 +19,7 @@ async function getUpcomingWorkouts(userId: string) {
     if (!userId) {
       return []
     }
-    const res = await fetch(`http://localhost:8888/.netlify/functions/futureworkouts?id=${userId}`, {
+    const res = await fetch(`/.netlify/functions/futureworkouts?id=${userId}`, {
       cache: 'no-store',
       headers: {
         'Content-Type': 'application/json',

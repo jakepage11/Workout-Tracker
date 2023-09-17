@@ -2,5 +2,5 @@
   @apply bg-[#E0DFFF] min-h-[calc(100vh-var(--navbar-height))];
 }
 .body > * {
-  @apply px-[15vw]
+  @apply px-[15vw];
 }

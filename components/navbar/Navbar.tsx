@@ -26,7 +26,7 @@ export default function NavBar() {
               
             </div>
             {/* Logout button */}
-            <button className={styles.logoutBtn} onClick={() => signOut}>Logout</button>
+            <button className={styles.logoutBtn} onClick={() => {console.log("sign out"); signOut()}}>Logout</button>
             
           </div>
       </nav>

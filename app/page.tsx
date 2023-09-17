@@ -3,7 +3,7 @@
 import { signOut } from "next-auth/react"
 
 export default function HomePage() {
-
+  
   return (
     <div className="flex flex-col">
       GOD DID
