@@ -1,2 +1,9 @@
 [build]
-  functions = "functions"
+  functions = "netlify/functions"
+  
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/"
+  to = "/dashboard"

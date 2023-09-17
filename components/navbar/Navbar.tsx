@@ -1,14 +1,14 @@
 'use client'
 import styles from "./NavBar.module.css"
 import Link from "next/link"
-import mainlogo from "../../../public/main_logo.png"
-import titlelogo from "../../../public/Long_logo.png"
+import mainlogo from "../../public/main_logo.png"
+import titlelogo from "../../public/Long_logo.png"
+import { signOut } from "next-auth/react"
 // import AuthContext from "@/stores/authContext"
 // import { useContext } from "react"
 // import ProfileIcon from "./ProfileIcon"
 
 export default function NavBar() {
-  // const {user, login, logout} = useContext(AuthContext);
 
   return (
     <div className={styles.main}>
@@ -25,10 +25,9 @@ export default function NavBar() {
               </Link>
               
             </div>
-            {/* {!user && <button className="style-btn" onClick={login}>
-                Login
-            </button>}
-            {user && <ProfileIcon />} */}
+            {/* Logout button */}
+            <button className={styles.logoutBtn} onClick={() => {console.log("sign out"); signOut()}}>Logout</button>
+            
           </div>
       </nav>
     </div>

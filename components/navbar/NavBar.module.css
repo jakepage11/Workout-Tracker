@@ -18,16 +18,6 @@
 .navcontainer > * {
   @apply px-[5vw];
 }
-.main nav {
-  /* width: 100%;
-  display: grid;
-  grid-template-columns: 0.5fr 1fr;
-  list-style-type: none;
-  height: var(--navbar-height);
-  align-items: center;
-  padding-left: 5vw;
-  background-color: white;*/
-}
 
 .linksContainer {
   @apply flex justify-end items-center gap-[5vw] w-[70vw];
@@ -39,6 +29,10 @@
 
 .navBarLink:hover {
   text-decoration: underline;
+}
+
+.logoutBtn {
+  @apply bg-[var(--blue)] text-white h-[40px] w-[125px] rounded-[20px] text-lg;
 }
 
 .profileIcon {
