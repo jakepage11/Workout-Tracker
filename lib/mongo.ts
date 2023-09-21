@@ -15,4 +15,6 @@ async function connectToDatabase(): Promise<Connection> {
   return globalConnection;
 }
 
+export { globalConnection }
 export default connectToDatabase
+

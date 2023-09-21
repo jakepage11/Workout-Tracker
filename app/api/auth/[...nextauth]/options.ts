@@ -3,7 +3,9 @@ import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import connectToDatabase from '@/lib/mongo'
 import User from '@/lib/models/User'
-import { redirect } from 'next/navigation'
+import { MongoDBAdapter } from '@auth/mongodb-adapter'
+import { globalConnection } from '@/lib/mongo'
+const bcrypt = require("bcrypt")
 
 export const options:NextAuthOptions = {
   providers: [
@@ -12,10 +14,10 @@ export const options:NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
     CredentialsProvider({
-      name: "Credentials",
+      name: "credentials",
       credentials: {
-        email: { label: "Username", type: "text", placeholder: ""},
-        password: { label: "Password", type: "password"},
+        email: { label: "Email", type: "text", placeholder: ""},
+        password: { label: "Password", type: "password"}
       },
       // function to validate credentials
       async authorize(credentials, req) {
@@ -23,51 +25,70 @@ export const options:NextAuthOptions = {
         try {
           await connectToDatabase()
           const user = await User.findOne({email: credentials?.email})
+          console.log("User database info ", user)
+          console.log("login attempt")
+          // Check if user exists
+          if (!user) {
+            return false
+          }
+
           const userObj = JSON.parse(JSON.stringify(user))
           // Check that password is valid if we found a user
-          if (userObj && userObj.password === credentials?.password) {
-              return userObj
-          } else if (!userObj) {
-            // Create the new user
-            User.create({
-              email: credentials?.email,
-            })
+          const passwordMatches = await bcrypt.compare(credentials?.password, userObj.password)
+          if (passwordMatches) {
+            // Convert _id to id
+            const id = userObj._id
+            delete userObj._id
+            console.log({userObj})
+            return {...userObj, id}
           }
-          return null
+          return false
         } catch (err) {
           console.log({err})
-          return null
+          return false
         }
       }
     })
   ],
+  // TODO: find adapter for mongodb that allows for getting token info
   callbacks: {
-    async session({session}) {
-      await connectToDatabase()
-      // Attach the user id to the session user
-      const sessionUser = await User.findOne({email: session?.user?.email})
-      const sessionWithId = {...session, user: {...session.user, id: sessionUser._id.valueOf()}}
-      return sessionWithId
-    },
-    async signIn({ profile }) {
-      await connectToDatabase()
-      // Create the user if account is new
-      try {
-        console.log({profile})
-        const user = await User.findOne({email: profile?.email})
-        if (!user) {
-          User.create({email: profile?.email, name: profile?.name, image: (profile as {picture: string}).picture})
-        }
-        // TODO: Send user to dashboard
-        return true
-      } catch (err) {
-        console.log({err})
-        return false
+    async session({session, token}) {
+      // await connectToDatabase()
+      // // Attach the user id to the session user along with the jwt
+      // const sessionUser = await User.findOne({email: session?.user?.email})
+      // const userId = sessionUser?.id
+      console.log({...session, token})
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
       }
-    }
+    },
+    async jwt({token, account, user, session}) {
+      console.log("jwt: ", {token, user, session, account})
+      let access_token
+      // If the provider is Google use the access token given by them
+      if (account?.provider === "google") {
+        access_token = account?.access_token
+      } else {
+        // Grab access token for credentials
+      }
+      if (user) {
+        // Return the token + the id of the user
+        return {...token, access_token, id: user.id}
+      }
+      return token // otherwise return token w/o id
+    },
   },
   pages: {
     signIn: "/login",
-    signOut: `${process.env.DEV_URL}/api/auth/signout`,
+    // TODO: edit this to be the production url when needed
+    signOut: `${process.env.NODE_ENV === 'development' ? process.env.DEV_URL : process.env.PROD_URL}/api/auth/signout`,
   },
+  session: {
+    strategy: "jwt",
+  },
+  debug: process.env.NODE_ENV === 'development',
 }

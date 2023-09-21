@@ -4,32 +4,23 @@ import { options } from "../api/auth/[...nextauth]/options"
 export default async function HomePage() {
   const session = await getServerSession(options)
   const user = session?.user
-  // await getUpcomingWorkouts((user as {id: string})?.id )
+  await getUpcomingWorkouts()
   return (
     <div>
-      hi
+      dashboard
     </div>
   )
 }
 
 // Returns an array of all upcoming workouts for the current user. If the user
 // isn't logged in returns []
-async function getUpcomingWorkouts(userId: string) {
-  try { 
-    if (!userId) {
-      return []
-    }
-    const res = await fetch(`/.netlify/functions/futureworkouts?id=${userId}`, {
-      cache: 'no-store',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-    const plannedWorkouts = await res.json();
-    console.log({plannedWorkouts})
-    return plannedWorkouts
-  } catch (err) {
-    console.log({err})
-    return []
-  }
+async function getUpcomingWorkouts() {
+  // TODO: need to add on either localhost or prod url before /api
+  const url = process.env.NODE_ENV === "development" ? process.env.DEV_URL : process.env.PROD_URL
+  const res = await fetch(`${url}/api/getUpcomingWorkouts`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
 }
