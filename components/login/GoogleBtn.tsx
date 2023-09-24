@@ -4,7 +4,6 @@ import { signIn } from "next-auth/react"
 
 export default function GoogleBtn({text, width}: {text: string, width: number}) {
   const login = async() => {
-    
     signIn("google", { callbackUrl: '/dashboard'})
   }
 

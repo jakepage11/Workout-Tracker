@@ -1,3 +1,4 @@
+// NOTE: No longer using mongoose -> switched to Prisma
 import mongoose, { Connection } from "mongoose";
 
 const MONGODB_URI = process.env.MONGODB_URI as string;

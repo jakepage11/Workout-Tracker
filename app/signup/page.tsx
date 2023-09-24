@@ -73,7 +73,7 @@ export default function SignupPage() {
       </div>
       
       <hr className="w-[300px]"></hr>
-      <GoogleBtn text={"Sign up with Google"} width={300}/>
+      <GoogleBtn text={"Sign-up/Login with Google"} width={300}/>
     </div>
   )
 }

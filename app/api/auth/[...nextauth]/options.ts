@@ -3,11 +3,14 @@ import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import connectToDatabase from '@/lib/mongo'
 import User from '@/lib/models/User'
-import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import { globalConnection } from '@/lib/mongo'
+import { PrismaClient } from '@prisma/client'
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
+import prisma from '@/prisma/dbConnection'
 const bcrypt = require("bcrypt")
 
 export const options:NextAuthOptions = {
+  // adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -23,23 +26,24 @@ export const options:NextAuthOptions = {
       async authorize(credentials, req) {
         // Find the user with the given email
         try {
-          await connectToDatabase()
-          const user = await User.findOne({email: credentials?.email})
-          console.log("User database info ", user)
-          console.log("login attempt")
+          const user = await prisma.users.findFirst({where: {email: credentials?.email}})
           // Check if user exists
           if (!user) {
             return false
           }
 
           const userObj = JSON.parse(JSON.stringify(user))
+          // Check whether account exists with another provider such as google
+          if (!userObj.hashedPassword) {
+            // throw new Error("Email is already linked to another provider")
+            return false // user must log in with google
+          }
           // Check that password is valid if we found a user
-          const passwordMatches = await bcrypt.compare(credentials?.password, userObj.password)
+          const passwordMatches = await bcrypt.compare(credentials?.password, userObj.hashedPassword)
           if (passwordMatches) {
             // Convert _id to id
             const id = userObj._id
             delete userObj._id
-            console.log({userObj})
             return {...userObj, id}
           }
           return false
@@ -53,18 +57,11 @@ export const options:NextAuthOptions = {
   // TODO: find adapter for mongodb that allows for getting token info
   callbacks: {
     async session({session, token}) {
-      // await connectToDatabase()
-      // // Attach the user id to the session user along with the jwt
-      // const sessionUser = await User.findOne({email: session?.user?.email})
-      // const userId = sessionUser?.id
-      console.log({...session, token})
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-        },
-      }
+      // Add user to the session along with the access token
+      console.log("Session token: ", token)
+      const sessionUser = await prisma.users.findFirst({where: {email: session?.user?.email as string}})
+      const sessionWithId = {...session, user: {...session.user, id: sessionUser?.id, token}}
+      return sessionWithId
     },
     async jwt({token, account, user, session}) {
       console.log("jwt: ", {token, user, session, account})
@@ -75,11 +72,28 @@ export const options:NextAuthOptions = {
       } else {
         // Grab access token for credentials
       }
+      // Return the access token if the user has logged in
       if (user) {
-        // Return the token + the id of the user
-        return {...token, access_token, id: user.id}
+        return {...token, access_token}
       }
       return token // otherwise return token w/o id
+    },
+    async signIn({profile, account}) {
+      try {
+        // Create new user in database if one doesn't already exist
+        const userExists = await prisma.users.findFirst({where: {email: profile?.email}})
+        if (!userExists && account?.provider === "google") {
+          console.log("creating new user")
+          await prisma.users.create({
+            data: {name: profile?.name as string, email: profile?.email as string, 
+                  image: profile?.image as string, createdAt: new Date(), updatedAt: new Date() }
+          })
+        }
+        return true
+      } catch (error) {
+        console.log({error})
+        return false
+      }
     },
   },
   pages: {

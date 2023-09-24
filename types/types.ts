@@ -1,12 +1,20 @@
-import { ObjectId } from "mongodb"
+import { IntegerType, ObjectId } from "mongodb"
 
 export type Workout = {
-  _id: string,
+  _id?: string,
   user: string,
   exercises: Array<Object>,
   difficulty: number,
   date: Date,
   completeIn: number,
+}
+
+export type Exercise = {
+  id: String 
+  name: String
+  reps: IntegerType[]
+  load: IntegerType[]
+  difficulty: Number
 }
 
 export type WorkoutStarted = {
