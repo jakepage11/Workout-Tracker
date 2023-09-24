@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef, useEffect, useContext } from 'react';
+import React, { useState, useRef, useEffect, useContext, ChangeEventHandler, ChangeEvent, MouseEventHandler } from 'react';
 import { useSession } from "next-auth/react"
 import classes from './NewWorkoutForm.module.css';
 import {nanoid} from "nanoid"
@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { Workout, Exercise } from '@/types/types';
 import prisma from '@/prisma/dbConnection';
+import ExerciseDisplay from './ExerciseDisplay';
 import { IntegerType } from 'mongodb';
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
@@ -20,7 +21,13 @@ export default function CreateWorkoutForm() {
   const [workout, setWorkout] = useState<Workout>(() => {
     return {
       user: session?.user?.email as string, 
-      exercises: [],
+      exercises: [{
+        id: nanoid(),
+        name: "",
+        reps: [0],
+        load: [0],
+        difficulty: -1,
+      }],
       difficulty: -1,
       date: new Date(),
       completeIn: -1,
@@ -60,52 +67,44 @@ export default function CreateWorkoutForm() {
   // }, [workout])
 
   // Sends the particular workout data to the db
-  async function handleSubmit(workoutParam: Workout) {
-    
-    if (status === "authenticated") { // only create workout for users that are logged in
-      
-        const fullWorkout = {...workoutParam, user: session?.user?.email}
-        await prisma.workouts.create({data: {
-          user: workout.user, exercises: workout.exercises,  
-        }})
-      // } else { // editing the workout
-        // TODO: add logic for updating a workout in the db
-        // await fetch('/.netlify/functions/update-workout', {
-        //   body: JSON.stringify(workoutParam),
-        //   method: 'POST',
-        //   headers: {
-        //     Authorization: `Bearer ${user.token.access_token}`,
-        //     'Content-Type': 'application/json'
-        //   }
-        // })
+  async function handleSubmit(e: MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    await prisma.workouts.create({data: {
+      user: workout.user, exercises: workout.exercises as Array<Exercise>, 
+      date: workout.date, type: "", completeIn: -1,
+    }})
+    router.replace("/");
+    // } else { // editing the workout
+      // TODO: add logic for updating a workout in the db
+      // await fetch('/.netlify/functions/update-workout', {
+      //   body: JSON.stringify(workoutParam),
+      //   method: 'POST',
+      //   headers: {
+      //     Authorization: `Bearer ${user.token.access_token}`,
+      //     'Content-Type': 'application/json'
+      //   }
+      // })
 
       // }
-      router.replace("/");
-    } else {
-      login();
-    }
   }
-
+    
   // Adds an exercise to the current workout plan
-  function addExercise(exname) {
+  function addExercise(exname: string) {
     console.log("adding exercise")
-    const lastOrder = currWorkout.exercises.length > 0 
-                            ? currWorkout.exercises[currWorkout.exercises.length - 1].orderNum 
-                            : 0;
     // Upon up the Create Set Screen
-    setCreateSetIndex(currWorkout.exercises.length);
+    setCreateSetIndex(workout.exercises.length);
     setShowCreateSet(true);
 
-    const exsCpy = [...currWorkout.exercises];
+    const exsCpy: Array<Exercise> = [...workout.exercises];
     exsCpy.push({
       id: nanoid(),
       name: exname,
-      reps: [],
-      load: [],
-      orderNum: lastOrder + 1,
+      reps: [0],
+      load: [0],
       difficulty: -1
     })
-    setCurrWorkout(prevState => ({
+    setWorkout(prevState => ({
       ...prevState,
       exercises: exsCpy
     }))
@@ -113,33 +112,29 @@ export default function CreateWorkoutForm() {
 
 
   // Deletes the exercise at index
-  function deleteExercise(e, index) {
+  function deleteExercise(e: MouseEvent, index: number) {
     e.preventDefault();
     e.stopPropagation();
-    // Delete the create set modal if needed
-    if (createSetIndex == index) {
-      setShowCreateSet(false);
-      setCreateSetIndex(-1);
-    } else if (index < createSetIndex) {
-       // Update the index if an exercise before it was deleted
-      setCreateSetIndex(prevState => prevState - 1);  
-    }
-    console.log("deleted")
+    const updatedExs = [...workout.exercises].splice(index, 1)
 
-    // TODO: update the order numbers
-    setCurrWorkout(prevState => {
-      const newList = [...prevState.exercises];
-      newList.splice(index, 1);
-      return {
-        ...prevState,
-        exercises: newList
-      }
-    });
+    // Delete the create set modal if needed
+    // if (createSetIndex == index) {
+    //   setShowCreateSet(false);
+    //   setCreateSetIndex(-1);
+    // } else if (index < createSetIndex) {
+    //    // Update the index if an exercise before it was deleted
+    //   setCreateSetIndex(prevState => prevState - 1);  
+    // }
+
+    setWorkout(prevState => ({
+      ...prevState,
+      exercises: updatedExs,
+    }));
   }
 
    // Stores the user sets values for a given exercise
-   function handleSetChanges(ex, index) {
-    let deepCopy = JSON.parse(JSON.stringify(currWorkout.exercises));
+   function handleSetChanges(exname: string, index: number) {
+    const currex = 
     // replace old exercise
     deepCopy[index] = {...ex};
     setShowCreateSet(false);
@@ -150,218 +145,50 @@ export default function CreateWorkoutForm() {
     }));
   }
 
-  // Handles changing the name of a given exercise
-  function changeExName(name, index) {
-    let exCpy = [...currWorkout.exercises];
-    exCpy[index] = {
-      ...exCpy[index],
-      name: name
+  // Handles setting values for the given exercise and/or set number
+  function handleExChanges(e: ChangeEvent<HTMLInputElement>, exindex: number, 
+    setindex: number|undefined) {
+    const exsDeepCopy: Array<Exercise> = JSON.parse(JSON.stringify(workout.exercises))
+    if (!setindex) { // updating name of ex
+      exsDeepCopy[exindex].name = e.target.value
+    } else { // updating reps or load
+      if (e.target.name === "reps") {
+        exsDeepCopy[exindex].reps[setindex] = Number(e.target.value)
+      } else {
+        exsDeepCopy[exindex].load[setindex] = Number(e.target.value)
+      }
     }
-    setCurrWorkout(prevState => ({
+    // update state
+    setWorkout(prevState => ({
       ...prevState,
-      exercises: exCpy
-    }));
+      exercises: exsDeepCopy, 
+    }))
   }
 
-  // Handles any changes made in the create sets component
-  // to be reflected in this one.
-  function updateExSets(ex, index) {
-    let exCpy = [...currWorkout.exercises]
-    exCpy[index] = {...ex}
-    setCurrWorkout( prevState => ({
-      ...prevState, 
-      exercises: JSON.parse(JSON.stringify(exCpy))
-    })
-      
-    )
+  // Handles assigning the date, type, location, and people
+  function handleFormChanges(e: ChangeEvent<HTMLInputElement>) {
+    const workoutDeepCopy: Workout = JSON.parse(JSON.stringify(workout))
+    workoutDeepCopy.date = new Date(e.target.value)
+    setWorkout(workoutDeepCopy)
   }
 
   // Displays the create set modal for the given exercise that was
   // pressed by the user
-  function displayCreateSets(index) {
+  function displayCreateSets(index: number) {
     setCreateSetIndex(index);
     setShowCreateSet(true);
   }
 
-  // Submits all non-empty exercise data to a server
-  // where the info is stored.
-  async function handleSubmitLocal(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    // Clear the session Storage after submitting.
-    window.sessionStorage.removeItem("workoutData");
-    console.log("submitting")
-    // Call the function given with props
-    await handleSubmit(currWorkout);
-  }
+  // Clears all sets of exercise at index.
+  function clearSets(index: number) {
+    let updatedExercises: Array<Exercise> = [...workout.exercises]
+    updatedExercises[index].reps = []
+    updatedExercises[index].load = []
 
-  // Prevents the auto submit from occuring 
-  function handleKeyDown(e) {
-    if (event.key === 'Enter') {
-      e.preventDefault();
-    }
-  }
-
-// Handles moving around exercises already in the workout (adjusting the order)
-function handleFormOnDrop(e) {
-  e.stopPropagation(); // prevent outer div from doing another onDrop.
-
-  // Get object data and then create a new exercise at the given drop location.
-  const ex = JSON.parse(e.dataTransfer.getData("exInfo"));
-  let exsCopy = [...currWorkout.exercises];
-
-  // Update all the orderings after dragOverEx.current
-  const replaceIndex = dragOverEx.current;
-  for (let i = replaceIndex; i < currWorkout.exercises.length; i++) {
-    currWorkout.exercises[i].orderNum++;
-  }
-
-  // Only rearrange if exercise wasn't dropped on itself
-  if (dragOverEx.current != draggedEx.current) {
-    const replaceIndex = dragOverEx.current;
-    // If the exercise was dropped onto an empty one then delete the empty one
-    if (exsCopy[replaceIndex].name == "") {
-      exsCopy.splice(replaceIndex, 1);
-    }
-    if (draggedEx.current != -1) { // Must be dragging from workout form so we have to delete
-      exsCopy.splice(draggedEx.current, 1);
-    }
-    exsCopy.splice(replaceIndex, 0, ex);
-  }
-
-  // Remove blue outline
-  e.currentTarget.classList.remove(classes.excontainerDrag);
-  dragOverEx.current = -1;
-  draggedEx.current = -1;
-  setCurrWorkout(prevState => ({
-    ...prevState,
-    exercises: exsCopy
-  }));
-}
-
-  // Handles moving around exercises already in the workout (adjusting the order)
-  function handleFormOnDrop(e) {
-    e.stopPropagation(); // prevent outer div from doing another onDrop.
-    // Get object data and then create a new exercise at the given drop location.
-      const lastOrder = currWorkout.exercises[dragOverEx.current].orderNum;
-      const ex = {...JSON.parse(e.dataTransfer.getData("exInfo")),
-                  orderNum: lastOrder}
-      let exsCopy = [...currWorkout.exercises];
-      const replaceIndex = dragOverEx.current;
-
-      // Only rearrange if exercise wasn't dropped on itself
-      if (dragOverEx.current != draggedEx.current) {
-        if (draggedEx.current != -1) { // Must be dragging from workout form so we have to delete
-          exsCopy.splice(draggedEx.current, 1);
-        }
-        exsCopy.splice(replaceIndex, 0, ex);
-      }
-
-      // Remove blue outline
-      e.currentTarget.classList.remove(classes.excontainerDrag);
-      dragOverEx.current = -1;
-      draggedEx.current = -1;
-      setCurrWorkout(prevState => ({
-        ...prevState,
-        exercises: exsCopy
-      }))
-  }
-
-  // Adds exercise from the search bar into the workout form
-  function handleOutsideFormDrop(e) {
-    addExercise({
-      ...JSON.parse(e.dataTransfer.getData("exInfo"))
-    });
-  }
-
-  // Handles dragging an exercise currently in the workout plan
-  function handleOnDrag(e, ex, index) {
-    e.dataTransfer.setData("exInfo", JSON.stringify(ex));
-    draggedEx.current = index;
-  }
-
-  // Handles keeping track of which exercise the dragged element is over
-  function handleOnDragOver(e, index) { 
-    e.preventDefault(); 
-    e.currentTarget.classList.add(classes.excontainerDrag);
-    dragOverEx.current = index; 
-    console.log(index)
-  }
-
-  function handleDragLeave(e) {e.currentTarget.classList.remove(classes.excontainerDrag);}
-
-  // Assign current date
-  function handleDate(e) {
-    const newDate = e.target.value;
-    const dateObj = dayjs(newDate);
-    // Extra date, hours, min, secs into new Date object
-
-    console.log({dateObj})
-    // const dateObj2 = dayjs(dateObj)
-    // console.log({dateObj2})
-    console.log(dateObj.date())
-    const utcDate = new Date(Date.UTC(dateObj.year(), dateObj.month(), 
-                                    dateObj.date(), dateObj.hour(), 
-                                    dateObj.minute(), dateObj.second()))
-    
-    console.log({utcDate});
-    setCurrWorkout(prevState => ({
+    setWorkout(prevState => ({
       ...prevState,
-      date: newDate
-    }));
-  }
-
-  function handleType(e) {
-    const type = e.target.value;
-    setCurrWorkout(prevState => ({
-      ...prevState,
-      type: type
-    }));
-  }
-
-  // Clears all sets of exercise at index. Leaves exercise
-  // with 0 sets
-  function clearSets(index) {
-
-    setCurrWorkout(prevState => {
-      let exCopy = [...prevState.exercises];
-      exCopy[index].reps = [];
-      exCopy[index].load = [];
-      return {
-        ...prevState,
-        exercises: exCopy
-      }
-    })
-
-  }
-
-  // Changes whether an exercise is superset with the one above it. 
-  // Flips superset to not superset and vice a versa.
-  function flipSuperset(e, index) {
-    e.stopPropagation();
-    e.preventDefault();
-    
-    setCurrWorkout((prevState) => {
-      let exCopy = JSON.parse(JSON.stringify(currWorkout.exercises));
-      console.log(exCopy[index]);
-      if (exCopy[index].orderNum !== exCopy[index - 1].orderNum) { // adding superset
-        // Decrease ordering of all exerises after
-        for (let i = index; i < currWorkout.exercises.length; i++) {
-          exCopy[i].orderNum--;
-        }
-      } else {  // removing superset
-        // Increase ordering of all exercises after
-        for (let i = index; i < currWorkout.exercises.length; i++) {
-          exCopy[i].orderNum++;
-        }
-      }
-      
-      // console.log(exCopy[index]);
-      return {
-        ...prevState,
-        exercises: JSON.parse(JSON.stringify(exCopy))
-      }
-    });
+      exercises: updatedExercises,
+    }))
   }
 
   // Removes the Create Set Modal from the screen
@@ -371,78 +198,59 @@ function handleFormOnDrop(e) {
   }
 
   // Removes any changes the user had made in this session
-  function revertChanges() {
-    setCurrWorkout({...JSON.parse(JSON.stringify(workout))});
-    setShowCreateSet(false)
-    closeCreateSet()
-    console.log("reset")
+  // function revertChanges() {
+  //   setCurrWorkout({...JSON.parse(JSON.stringify(workout))});
+  //   setShowCreateSet(false)
+  //   closeCreateSet()
+  //   console.log("reset")
+  // }
+
+  function getExerciseAttr(exname: string) {
+    // use list of exercises from the prop to
+    // if (exInfo !== undefined) {
+    //   for (let i = 0; i < exInfo.tags.length; i++) {
+    //     tags += exInfo.tags[i] + "  "
+    //   }
+    //   for (let i = 0; i < exInfo.muscles.length; i++) {
+    //     muscleStr += exInfo.muscles[i] + "  "
+    //   }
+    //   for (let i = 0; i < exInfo.equipment.length; i++) {
+    //     equipmentStr += exInfo.equipment[i] + "  "
+    //   }
+    // }
+    // muscleStr.trim();
+    // equipmentStr.trim();
+    // tags.trim();
+    // TODO: return the ex info
   }
 
   // Creates the exercises array that stores all exercises in the current
   // workout along with the sets that contain their own reps and load.
-  const exercises = currWorkout.exercises.map((ex, index) => {
-    let exInfo = allExercises.find(obj => obj.name === ex.name)
-    let muscleStr = ""
-    let equipmentStr = ""
-    let tags = ""
-    if (exInfo !== undefined) {
-      for (let i = 0; i < exInfo.tags.length; i++) {
-        tags += exInfo.tags[i] + "  "
-      }
-      for (let i = 0; i < exInfo.muscles.length; i++) {
-        muscleStr += exInfo.muscles[i] + "  "
-      }
-      for (let i = 0; i < exInfo.equipment.length; i++) {
-        equipmentStr += exInfo.equipment[i] + "  "
-      }
-    }
-    muscleStr.trim();
-    equipmentStr.trim();
-    tags.trim();
-
+  const exercises = workout.exercises.map((ex, index) => {
+    const exinfo = {}
+    // TODO: Get the exercise info object using by searching the name
     return <ExerciseDisplay exname={ex.name}
                     handleClick={() => displayCreateSets(index)}
-                    tags={tags}
-                    muscles={muscleStr}
-                    equipment={equipmentStr}
+                    exinfo={exinfo}
+                    exercise={ex}
                     key={`ex-${ex.id}`}
-                    handleDelete={(e) => deleteExercise(e, index)}
-                    numsets={ex.reps.length}
+                    handleDelete={(e: MouseEvent) => deleteExercise(e, index)}
                     />
   })
-      {/* <div key={ex.id} className={classes.excontainer} draggable onDragStart={(e) => handleOnDrag(e, ex, index)} 
-                onDragOver={(e) => handleOnDragOver(e, index)} 
-                onDrop={(e) => handleFormOnDrop(e, index)}
-                onDragLeave={(e) => handleDragLeave(e)}
-                onClick={() => displayCreateSets(index)}> */}
-
-  const updatedTypes = ["Choose Type", ...workoutTypes];
-
-  // Map each workout type into an option
-  const types = updatedTypes.map((type, index) => {
-    return <option key={index} value={type}>{type}</option>
-  });
 
   // Local time put into UTC with the same time of day
-  const localTime = dayjs.utc(currWorkout.date).format('YYYY-MM-DDTHH:mm')
+  const localTime = dayjs.utc(workout.date).format('YYYY-MM-DDTHH:mm')
   // TODO: make backend call to calculate the amount of time the workout will take
   return (
-      <div className={classes.formContainer} onDrop={(e) => handleOutsideFormDrop(e)}>
+      <div className={classes.formContainer}>
         {/* left side with exercises listed */}
         <div className={classes.leftForm}>
           {/* type and date */}
           <div className={classes.typeDate}>
-            <select className={classes.workoutType} 
-                    placeholder="Workout Type" 
-                    value={currWorkout.type} 
-                    id="typeSelect"
-                    onChange={(e) => handleType(e)}>
-                {types}
-            </select>
             <input className={classes.dateInput} 
                       type='datetime-local' 
                       value={localTime} 
-                      onChange={(e) => handleDate(e)} />
+                      onChange={(e) => handleFormChanges(e)} />
           </div>
         {/* Exercises along with buttons */}
           <div className={classes.workoutDisplay}>
@@ -457,7 +265,7 @@ function handleFormOnDrop(e) {
               {/* Either show create or save changes / revert changes buttons */}
               {workout === undefined && 
                 <div className={classes.editBtnsContainer}>
-                  <button className={classes.submitBtn} onClick={(e) => handleSubmitLocal(e)}>Create Workout</button>
+                  <button className={classes.submitBtn} onClick={(e) => handleSubmit(e)}>Create Workout</button>
                 </div>
               }
               {workout !== undefined && 

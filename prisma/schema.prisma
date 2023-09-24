@@ -32,8 +32,8 @@ model workouts {
 type Exercise {
   id String 
   name String
-  reps Int[]
-  load Int[]
+  reps Float[]
+  load Float[]
   difficulty Int
 }
 
