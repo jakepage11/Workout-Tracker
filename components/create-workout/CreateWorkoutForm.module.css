@@ -1,0 +1,83 @@
+.formContainer {
+  display: flex;
+  position: relative;
+}
+.leftForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #141349;
+  height: 80vh;
+  width: 550px;
+  border-radius: 10px;
+}
+.rightForm {
+  position: absolute;
+  top: 5%;
+  right: 0;
+}
+
+/* Date and Type header */
+.typeDate {
+  padding: 10px;
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  text-align: center;
+}
+
+.exList {
+  width: 95%;
+  gap: 10px;
+  height: 80%;
+  overflow-y: scroll;
+}
+.exList > * {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.exList::-webkit-scrollbar {
+  backface-visibility: 100%;
+  background: transparent;
+  width: 5px;
+}
+.exList::-webkit-scrollbar-thumb {
+  background: grey;
+  border-radius: 20px; 
+}
+
+.btnContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.inputBar {
+  margin-left: 1vw;
+  margin-right: 1vw;
+  width: auto;
+  height: 5vh;
+  font-size: 1rem;
+  border: none;
+}
+
+.exInputForm {
+  height: 3vh;
+  width: 10vw;
+  margin-left: 1vh;
+}
+
+.repsInputForm {
+  height: 3vh;
+  width: 15vw;
+}
+
+.editBtnsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  bottom: 2%;
+}
+.editBtnsContainer > * {
+  background-color: black;
+}

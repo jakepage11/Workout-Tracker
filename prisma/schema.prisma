@@ -42,7 +42,7 @@ model exercises {
   name String @unique
   muscles String[]
   tags String[]
-  level Int
+  level String
   link String
   equipment String[]
   popularity Float

@@ -18,12 +18,12 @@ export type Exercise = {
 }
 
 export type ExerciseInfo = {
-  id: ObjectId,
+  id: string,
   name: string,
   muscles: Array<String>
   tags: Array<String>
-  level: number
-  link: String
+  level: string
+  link: string
   equipment: Array<String>
   popularity: number
   people_req: number

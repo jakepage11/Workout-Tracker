@@ -1,0 +1,11 @@
+{
+  "name": "BB Flat Benchpress",
+  "muscles": ["chest", "triceps", "deltoids"],
+  "tags": ["push", "upper"],
+  "level": "intermediate",
+  "link": "",
+  "equipment": ["barbell", "bench"],
+  "popularity": 0.9,
+  "people_req": 0,
+  "description": "Great compound exercise to target the major pushing muscles especially the chest"
+}

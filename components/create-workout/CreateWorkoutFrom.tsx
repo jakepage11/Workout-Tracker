@@ -1,21 +1,23 @@
 'use client'
 import React, { useState, useRef, useEffect, useContext, ChangeEventHandler, ChangeEvent, MouseEventHandler } from 'react';
 import { useSession } from "next-auth/react"
-import classes from './NewWorkoutForm.module.css';
+import classes from './CreateWorkoutForm.module.css';
 import {nanoid} from "nanoid"
 import { MoreVert, Close } from '@mui/icons-material';
 import dayjs from 'dayjs';
+import { MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Workout, Exercise } from '@/types/types';
 import prisma from '@/prisma/dbConnection';
 import ExerciseDisplay from './ExerciseDisplay';
+import { ExerciseInfo } from '@/types/types';
 import { IntegerType } from 'mongodb';
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
 // Component used to edit and create new workouts. Takes in list of exercises, the workout (if
 // we're editing one, will be null otherwise), a function to submit the workout, and the types of workouts.
-export default function CreateWorkoutForm() {
+export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array<ExerciseInfo>}) {
   const router = useRouter()
   const {data: session, status} = useSession()
   const [workout, setWorkout] = useState<Workout>(() => {
@@ -33,41 +35,38 @@ export default function CreateWorkoutForm() {
       completeIn: -1,
     }
   }) 
- 
 
   // Keep track of whether we should show the create set screen and for which ex
   const [showCreateSet, setShowCreateSet] = useState(() => {return false});
   const [createSetIndex, setCreateSetIndex] = useState(() => {return -1});
   const [initialLoad, setInitialLoad] = useState(() => {return true});
 
-  // Store current dragged exercise index along with what exercise it
-  // is currently hovering over.
-  const draggedEx = useRef(-1);
-  const dragOverEx = useRef(-1);
-
   // Get previous values that user had in form before the page refreshed.
-  // useEffect(() => {
-  //   const workout = window.sessionStorage.getItem("workoutData");
-  //   let newWorkout = JSON.parse(workout);
-  //   // Set if we've previously assigned a value
-  //   if (newWorkout !== null) {
-  //     setCurrWorkout({...newWorkout})
-  //   }
-  //   setInitialLoad(false);
-  //   return () => {  // when the component unmounts we want to delete the session storage
-  //     window.sessionStorage.removeItem("workoutData");
-  //   }
-  // }, []);
+  useEffect(() => {
+    const cachedWorkout = window.sessionStorage.getItem("workoutData");
+    console.log(cachedWorkout)
+    if (cachedWorkout) {
+      let newWorkout = JSON.parse(cachedWorkout);
+      // Set if we've previously assigned a value
+      setWorkout({...newWorkout})
+    }
+    setInitialLoad(false);
+    
+    return () => {  // when the component unmounts we want to delete the session storage
+      window.sessionStorage.removeItem("workoutData");
+    }
+  }, []);
 
   // Update the local storage each time state changes
-  // useEffect(() => {
-  //   if (!initialLoad) {
-  //     window.sessionStorage.setItem("workoutData", JSON.stringify(workout));
-  //   }
-  // }, [workout])
+  useEffect(() => {
+    console.log("workout changed")
+    if (!initialLoad) {
+      window.sessionStorage.setItem("workoutData", JSON.stringify(workout));
+    }
+  }, [workout])
 
   // Sends the particular workout data to the db
-  async function handleSubmit(e: MouseEvent) {
+  async function handleSubmit(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     e.stopPropagation()
     await prisma.workouts.create({data: {
@@ -110,40 +109,7 @@ export default function CreateWorkoutForm() {
     }))
   }
 
-
-  // Deletes the exercise at index
-  function deleteExercise(e: MouseEvent, index: number) {
-    e.preventDefault();
-    e.stopPropagation();
-    const updatedExs = [...workout.exercises].splice(index, 1)
-
-    // Delete the create set modal if needed
-    // if (createSetIndex == index) {
-    //   setShowCreateSet(false);
-    //   setCreateSetIndex(-1);
-    // } else if (index < createSetIndex) {
-    //    // Update the index if an exercise before it was deleted
-    //   setCreateSetIndex(prevState => prevState - 1);  
-    // }
-
-    setWorkout(prevState => ({
-      ...prevState,
-      exercises: updatedExs,
-    }));
-  }
-
-   // Stores the user sets values for a given exercise
-   function handleSetChanges(exname: string, index: number) {
-    const currex = 
-    // replace old exercise
-    deepCopy[index] = {...ex};
-    setShowCreateSet(false);
-    setCreateSetIndex(-1);
-    setCurrWorkout(prevState => ({
-      ...prevState,
-      exercises: deepCopy
-    }));
-  }
+  console.log({workout})
 
   // Handles setting values for the given exercise and/or set number
   function handleExChanges(e: ChangeEvent<HTMLInputElement>, exindex: number, 
@@ -205,36 +171,30 @@ export default function CreateWorkoutForm() {
   //   console.log("reset")
   // }
 
-  function getExerciseAttr(exname: string) {
-    // use list of exercises from the prop to
-    // if (exInfo !== undefined) {
-    //   for (let i = 0; i < exInfo.tags.length; i++) {
-    //     tags += exInfo.tags[i] + "  "
-    //   }
-    //   for (let i = 0; i < exInfo.muscles.length; i++) {
-    //     muscleStr += exInfo.muscles[i] + "  "
-    //   }
-    //   for (let i = 0; i < exInfo.equipment.length; i++) {
-    //     equipmentStr += exInfo.equipment[i] + "  "
-    //   }
-    // }
-    // muscleStr.trim();
-    // equipmentStr.trim();
-    // tags.trim();
-    // TODO: return the ex info
+   // Deletes the exercise with the given id
+   function deleteExercise(id: string) {
+    console.log("delete")
+    const exsDeepCopy: Exercise[] = JSON.parse(JSON.stringify(workout.exercises))
+    const exToDelete = exsDeepCopy.find(ex => ex.id === id) as Exercise
+    exsDeepCopy.splice(exsDeepCopy.indexOf(exToDelete), 1)
+
+    setWorkout(prevState => ({
+      ...prevState,
+      exercises: exsDeepCopy,
+    }));
   }
 
   // Creates the exercises array that stores all exercises in the current
   // workout along with the sets that contain their own reps and load.
   const exercises = workout.exercises.map((ex, index) => {
-    const exinfo = {}
     // TODO: Get the exercise info object using by searching the name
-    return <ExerciseDisplay exname={ex.name}
+    const exinfo = exercisesInfo.find(exercise => exercise.name === ex.name) ?? undefined
+    return <ExerciseDisplay
                     handleClick={() => displayCreateSets(index)}
                     exinfo={exinfo}
                     exercise={ex}
                     key={`ex-${ex.id}`}
-                    handleDelete={(e: MouseEvent) => deleteExercise(e, index)}
+                    handleDelete={() => deleteExercise(ex.id)}
                     />
   })
 
@@ -247,18 +207,19 @@ export default function CreateWorkoutForm() {
         <div className={classes.leftForm}>
           {/* type and date */}
           <div className={classes.typeDate}>
-            <input className={classes.dateInput} 
+            <input className="text-[20px] rounded-md" 
                       type='datetime-local' 
                       value={localTime} 
                       onChange={(e) => handleFormChanges(e)} />
           </div>
         {/* Exercises along with buttons */}
-          <div className={classes.workoutDisplay}>
+          <div className="flex flex-col items-center w-[95%] bg-white h-[87%] rounded-md relative">
               <h2>Exercises</h2>
+              {/* Container for list of exercises */}
               <div className={classes.exList}>
                 {exercises}
                 <div className={classes.btnContainer}>
-                  <button onClick={() => addExercise("")} className={classes.addExBtn}>Add Exercise</button>
+                  <button onClick={() => addExercise("")} className="bg-[var(--pink)] w-[200px] rounded-full py-1">Add Exercise</button>
                 </div>
               </div>
               
@@ -270,17 +231,17 @@ export default function CreateWorkoutForm() {
               }
               {workout !== undefined && 
                 <div className={classes.editBtnsContainer}>
-                  <button className={classes.submitBtn} onClick={(e) => handleSubmitLocal(e)}>Save Changes</button>
-                  <p className={classes.revertChanges}
+                  <button className={classes.submitBtn} onClick={(e) => handleSubmit(e)}>Save Changes</button>
+                  {/* <p className={classes.revertChanges}
                       onClick={revertChanges}>
                     <u>Revert Changes</u>
-                  </p>
+                  </p> */}
                 </div>
               }
           </div>
         
         </div>
-        <div className={classes.rightForm}>
+        {/* <div className={classes.rightForm}>
           {showCreateSet && <CreateSets ex={currWorkout.exercises[createSetIndex]} 
                                     handleName={changeExName} 
                                     handleSave={handleSetChanges}
@@ -288,7 +249,7 @@ export default function CreateWorkoutForm() {
                                     allExercises={allExercises}
                                     handleClose={() => {setShowCreateSet(false); setCreateSetIndex(-1)}}
                                     handleUpdate={updateExSets}/>}
-        </div>
+        </div> */}
         
       </div>
     
