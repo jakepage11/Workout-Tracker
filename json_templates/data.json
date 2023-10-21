@@ -1,11 +1,46 @@
-{
-  "name": "BB Flat Benchpress",
-  "muscles": ["chest", "triceps", "deltoids"],
-  "tags": ["push", "upper"],
-  "level": "intermediate",
-  "link": "",
-  "equipment": ["barbell", "bench"],
-  "popularity": 0.9,
-  "people_req": 0,
-  "description": "Great compound exercise to target the major pushing muscles especially the chest"
-}
+[ 
+  {
+    "name": "BB Flat Benchpress",
+    "muscles": ["chest", "triceps", "deltoids"],
+    "tags": ["push", "upper"],
+    "level": "intermediate",
+    "link": "",
+    "equipment": ["barbell", "bench"],
+    "popularity": -1,
+    "people_req": 0,
+    "description": "Great compound exercise to target the major pushing muscles especially the chest"
+  },
+  {
+    "name": "BB Backsquat",
+    "muscles": ["quads", "hamstrings", "glutes", "calves", "lower back"],
+    "tags": ["legs"],
+    "level": "intermediate",
+    "link": "",
+    "equipment": ["barbell", "squat rack"],
+    "popularity": -1,
+    "people_req": 0,
+    "description": "Popular compound movement that works the whole lower body and also the core"
+  },
+  {
+    "name": "Leg press",
+    "muscles": ["quads", "hamstrings", "glutes", "calves"],
+    "tags": ["legs"],
+    "level": "intermediate",
+    "link": "",
+    "equipment": ["leg press machine"],
+    "popularity": -1,
+    "people_req": 0,
+    "description": "Compound movement that mimics a squat and takes the lower back out of the movement"
+  },
+  {
+    "name": "DB Lateral Raise",
+    "muscles": ["deltoids", "mid deltoids"],
+    "tags": ["shoulders", "upper"],
+    "level": "intermediate",
+    "link": "",
+    "equipment": ["dumbells"],
+    "popularity": -1,
+    "people_req": 0,
+    "description": "Movement that raises the weight from the side and works to isolate the shoulder muscles."
+  }
+]

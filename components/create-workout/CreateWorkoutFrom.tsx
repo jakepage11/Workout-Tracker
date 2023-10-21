@@ -11,11 +11,12 @@ import { Workout, Exercise } from '@/types/types';
 import prisma from '@/prisma/dbConnection';
 import ExerciseDisplay from './ExerciseDisplay';
 import { ExerciseInfo } from '@/types/types';
+import SetsDisplay from "./SetsDisplay"
 import { IntegerType } from 'mongodb';
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
-// Component used to edit and create new workouts. Takes in list of exercises, the workout (if
+// Workout Form for user to enter information into. Takes in list of exercises, the workout (if
 // we're editing one, will be null otherwise), a function to submit the workout, and the types of workouts.
 export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array<ExerciseInfo>}) {
   const router = useRouter()
@@ -36,7 +37,7 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
     }
   }) 
 
-  // Keep track of whether we should show the create set screen and for which ex
+  // Keep track of whether we should show the create set screen and for which exercise
   const [showCreateSet, setShowCreateSet] = useState(() => {return false});
   const [createSetIndex, setCreateSetIndex] = useState(() => {return -1});
   const [initialLoad, setInitialLoad] = useState(() => {return true});
@@ -66,28 +67,15 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
   }, [workout])
 
   // Sends the particular workout data to the db
-  async function handleSubmit(e: MouseEvent<HTMLButtonElement>) {
+  async function submitWorkout(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     e.stopPropagation()
     await prisma.workouts.create({data: {
-      user: workout.user, exercises: workout.exercises as Array<Exercise>, 
+      user: workout.user, exercises: workout.exercises as Array<Exercise>,
       date: workout.date, type: "", completeIn: -1,
     }})
     router.replace("/");
-    // } else { // editing the workout
-      // TODO: add logic for updating a workout in the db
-      // await fetch('/.netlify/functions/update-workout', {
-      //   body: JSON.stringify(workoutParam),
-      //   method: 'POST',
-      //   headers: {
-      //     Authorization: `Bearer ${user.token.access_token}`,
-      //     'Content-Type': 'application/json'
-      //   }
-      // })
-
-      // }
   }
-    
   // Adds an exercise to the current workout plan
   function addExercise(exname: string) {
     console.log("adding exercise")
@@ -111,23 +99,13 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
 
   console.log({workout})
 
-  // Handles setting values for the given exercise and/or set number
-  function handleExChanges(e: ChangeEvent<HTMLInputElement>, exindex: number, 
-    setindex: number|undefined) {
-    const exsDeepCopy: Array<Exercise> = JSON.parse(JSON.stringify(workout.exercises))
-    if (!setindex) { // updating name of ex
-      exsDeepCopy[exindex].name = e.target.value
-    } else { // updating reps or load
-      if (e.target.name === "reps") {
-        exsDeepCopy[exindex].reps[setindex] = Number(e.target.value)
-      } else {
-        exsDeepCopy[exindex].load[setindex] = Number(e.target.value)
-      }
-    }
-    // update state
+  // Changes the exercise at index to ex
+  function updateExercise(ex: Exercise, index: number) {
+    const exercisesCopy = JSON.parse(JSON.stringify(workout.exercises))
+    exercisesCopy[index] = ex;
     setWorkout(prevState => ({
-      ...prevState,
-      exercises: exsDeepCopy, 
+      ...prevState, 
+      exercises: exercisesCopy,
     }))
   }
 
@@ -163,14 +141,6 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
     setShowCreateSet(false)
   }
 
-  // Removes any changes the user had made in this session
-  // function revertChanges() {
-  //   setCurrWorkout({...JSON.parse(JSON.stringify(workout))});
-  //   setShowCreateSet(false)
-  //   closeCreateSet()
-  //   console.log("reset")
-  // }
-
    // Deletes the exercise with the given id
    function deleteExercise(id: string) {
     console.log("delete")
@@ -198,61 +168,54 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
                     />
   })
 
+  console.log(exercisesInfo)
   // Local time put into UTC with the same time of day
   const localTime = dayjs.utc(workout.date).format('YYYY-MM-DDTHH:mm')
   // TODO: make backend call to calculate the amount of time the workout will take
   return (
+    // Entire page container: search, form, set display
       <div className={classes.formContainer}>
-        {/* left side with exercises listed */}
-        <div className={classes.leftForm}>
-          {/* type and date */}
-          <div className={classes.typeDate}>
-            <input className="text-[20px] rounded-md" 
-                      type='datetime-local' 
-                      value={localTime} 
-                      onChange={(e) => handleFormChanges(e)} />
-          </div>
-        {/* Exercises along with buttons */}
-          <div className="flex flex-col items-center w-[95%] bg-white h-[87%] rounded-md relative">
-              <h2>Exercises</h2>
-              {/* Container for list of exercises */}
-              <div className={classes.exList}>
-                {exercises}
-                <div className={classes.btnContainer}>
-                  <button onClick={() => addExercise("")} className="bg-[var(--pink)] w-[200px] rounded-full py-1">Add Exercise</button>
-                </div>
-              </div>
-              
-              {/* Either show create or save changes / revert changes buttons */}
-              {workout === undefined && 
-                <div className={classes.editBtnsContainer}>
-                  <button className={classes.submitBtn} onClick={(e) => handleSubmit(e)}>Create Workout</button>
-                </div>
-              }
-              {workout !== undefined && 
-                <div className={classes.editBtnsContainer}>
-                  <button className={classes.submitBtn} onClick={(e) => handleSubmit(e)}>Save Changes</button>
-                  {/* <p className={classes.revertChanges}
-                      onClick={revertChanges}>
-                    <u>Revert Changes</u>
-                  </p> */}
-                </div>
-              }
-          </div>
-        
+        <div>
+          ExSearch Here
+          <hr className="h-2 bg-black"/>
         </div>
-        {/* <div className={classes.rightForm}>
-          {showCreateSet && <CreateSets ex={currWorkout.exercises[createSetIndex]} 
-                                    handleName={changeExName} 
-                                    handleSave={handleSetChanges}
-                                    index={createSetIndex}
-                                    allExercises={allExercises}
-                                    handleClose={() => {setShowCreateSet(false); setCreateSetIndex(-1)}}
-                                    handleUpdate={updateExSets}/>}
-        </div> */}
-        
+        {/* Middle Column */}
+        <div className='flex flex-col items-center'>
+          <div className={classes.middleColumn}>
+            {/* type and date */}
+            <div className={classes.typeDate}>
+              <input className="text-[20px] rounded-md" 
+                        type='datetime-local' 
+                        value={localTime} 
+                        onChange={(e) => handleFormChanges(e)} />
+            </div>
+            {/* Exercises along with buttons */}
+            <div className="flex flex-col items-center w-[95%] bg-white h-[87%] rounded-md relative">
+                <h2>Exercises</h2>
+                {/* Container for list of exercises */}
+                <div className={classes.exList}>
+                  {exercises}
+                  <div className={classes.btnContainer}>
+                    <button onClick={() => addExercise("")} className="bg-[var(--pink)] w-[200px] rounded-full py-1">Add Exercise</button>
+                  </div>
+                </div>
+
+                {/* Create Workout Button*/}
+                <div className={classes.editBtnsContainer}>
+                  <button className="text-white w-[200px] rounded-lg py-1" onClick={(e) => submitWorkout(e)}>
+                    Create Workout
+                  </button>
+                </div>
+            </div>
+          </div>
+        </div>
+        <div className={classes.rightColumn}>
+          {showCreateSet && <SetsDisplay ex={workout.exercises[createSetIndex]} 
+            index={createSetIndex} handleUpdate={updateExercise} allExercises={exercisesInfo}
+            handleClose={() => {setShowCreateSet(false); setCreateSetIndex(-1)}}
+          />}
+        </div>
       </div>
-    
   );
 }
 
