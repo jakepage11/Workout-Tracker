@@ -19,13 +19,13 @@
 }
 
 /* Date and Type header */
-.typeDate {
+/* .typeDate {
   padding: 10px;
   display: flex;
   width: 100%;
   justify-content: space-around;
   text-align: center;
-}
+} */
 
 .exList {
   width: 95%;

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect, useContext, ChangeEventHandler, Cha
 import { useSession } from "next-auth/react"
 import classes from './CreateWorkoutForm.module.css';
 import {nanoid} from "nanoid"
-import { MoreVert, Close } from '@mui/icons-material';
+import { MoreVert, Close, People, LocationOn } from '@mui/icons-material';
 import dayjs from 'dayjs';
 import { MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,12 +13,14 @@ import ExerciseDisplay from './ExerciseDisplay';
 import { ExerciseInfo } from '@/types/types';
 import SetsDisplay from "./SetsDisplay"
 import { IntegerType } from 'mongodb';
+import { submitWorkout } from '@/app/create-workout/page';
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
 // Workout Form for user to enter information into. Takes in list of exercises, the workout (if
 // we're editing one, will be null otherwise), a function to submit the workout, and the types of workouts.
-export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array<ExerciseInfo>}) {
+export default function CreateWorkoutForm({exercisesInfo}: 
+  {exercisesInfo: Array<ExerciseInfo>}) {
   const router = useRouter()
   const {data: session, status} = useSession()
   const [workout, setWorkout] = useState<Workout>(() => {
@@ -67,14 +69,12 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
   }, [workout])
 
   // Sends the particular workout data to the db
-  async function submitWorkout(e: MouseEvent<HTMLButtonElement>) {
+  async function submitWorkoutLocal(e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     e.stopPropagation()
-    await prisma.workouts.create({data: {
-      user: workout.user, exercises: workout.exercises as Array<Exercise>,
-      date: workout.date, type: "", completeIn: -1,
-    }})
     router.replace("/");
+    // Call prop function
+    await submitWorkout(workout)
   }
   // Adds an exercise to the current workout plan
   function addExercise(exname: string) {
@@ -96,8 +96,6 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
       exercises: exsCpy
     }))
   }
-
-  console.log({workout})
 
   // Changes the exercise at index to ex
   function updateExercise(ex: Exercise, index: number) {
@@ -144,6 +142,9 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
    // Deletes the exercise with the given id
    function deleteExercise(id: string) {
     console.log("delete")
+    // Close Set Display is open close it
+    setCreateSetIndex(-1)
+    setShowCreateSet(false)
     const exsDeepCopy: Exercise[] = JSON.parse(JSON.stringify(workout.exercises))
     const exToDelete = exsDeepCopy.find(ex => ex.id === id) as Exercise
     exsDeepCopy.splice(exsDeepCopy.indexOf(exToDelete), 1)
@@ -168,9 +169,6 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
                     />
   })
 
-  console.log(exercisesInfo)
-  // Local time put into UTC with the same time of day
-  const localTime = dayjs.utc(workout.date).format('YYYY-MM-DDTHH:mm')
   // TODO: make backend call to calculate the amount of time the workout will take
   return (
     // Entire page container: search, form, set display
@@ -183,11 +181,13 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
         <div className='flex flex-col items-center'>
           <div className={classes.middleColumn}>
             {/* type and date */}
-            <div className={classes.typeDate}>
-              <input className="text-[20px] rounded-md" 
+            <div className="p-2 flex justify-around align-middle w-[100%]">
+              <LocationOn className='text-white cursor-pointer'/>
+              <input className="text-[20px] rounded-md px-2" 
                         type='datetime-local' 
-                        value={localTime} 
+                        value={dayjs(workout.date).format('YYYY-MM-DDTHH:mm')}
                         onChange={(e) => handleFormChanges(e)} />
+              <People className='text-white cursor-pointer'/>
             </div>
             {/* Exercises along with buttons */}
             <div className="flex flex-col items-center w-[95%] bg-white h-[87%] rounded-md relative">
@@ -202,7 +202,7 @@ export default function CreateWorkoutForm({exercisesInfo}: {exercisesInfo: Array
 
                 {/* Create Workout Button*/}
                 <div className={classes.editBtnsContainer}>
-                  <button className="text-white w-[200px] rounded-lg py-1" onClick={(e) => submitWorkout(e)}>
+                  <button className="text-white w-[200px] rounded-lg py-1" onClick={(e) => submitWorkoutLocal(e)}>
                     Create Workout
                   </button>
                 </div>

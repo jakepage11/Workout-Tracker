@@ -14,14 +14,12 @@ export default function SearchBar({query, all_exercises, updateName}
     return <div className="cursor-pointer" onClick={(e) => {updateName(e, undefined, ex.name)}}>{ex.name}</div>
   })
 
-
-
   return (
     <div>
       {/* Search Bar */}
-      <input id="set_display_search" className="w-[250px] h-[40px] mt-2 rounded-lg" placeholder='Exercise Name' 
+      <input id="set_display_search" className="w-[250px] h-[40px] px-2 mt-2 rounded-lg" placeholder='Exercise Name' 
           value={query} name="name" onChange={(e) => updateName(e)} onFocus={() => setShowResults(true)} 
-          onBlur={() => {setTimeout(() => {setShowResults(false)}, 100)}}
+          onBlur={() => {setTimeout(() => {setShowResults(false)}, 100)}} autoComplete="off"
          />
       {/* Search Results */}
       {showResults && <div className='absolute bg-white w-[250px] h-fit z-10 flex flex-col gap-2'>

@@ -113,13 +113,13 @@ export default function ExSetDisplay({ex, index, handleClose, handleUpdate, allE
       <div className={classes.setsContainer}>
         {sets}
         <div className={classes.addBtnContainer}>
-          <button className="bg-[var(--pink)] w-[200px] rounded-full py-1 mt-2"
+          <button className="bg-[var(--pink)] w-[200px] rounded-full py-1 mt-4"
                 onClick={handleAdd}>Add Set</button>
         </div>
       </div>
       <hr className="h-2 bg-black my-10"/>
       {/* previous numbers from the current exercise */}
-      <div className={classes.prevCont}>
+      <div className="mb-5">
         <h6>Previous Use</h6>
         {/* Find last used exercise */}
       </div>
@@ -130,4 +130,11 @@ export default function ExSetDisplay({ex, index, handleClose, handleUpdate, allE
       {/* <button onClick={saveExercises}>Save</button> */}
     </div>
   )
+}
+
+// Returns the last 3 uses of the given exercise.
+// If exname hasn't been used 3 times it returns the amount
+// of times its been used.
+async function getPreviousUse(exname: string) {
+
 }
