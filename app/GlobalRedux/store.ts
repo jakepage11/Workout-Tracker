@@ -1,9 +1,9 @@
 'use client'
 import { configureStore } from "@reduxjs/toolkit";
-import workoutSlice from "./Features/futureworkouts/futureworkoutsSlice";
+import futureWorkoutSlice from "./Features/futureworkouts/futureworkoutsSlice";
 export const store = configureStore({
   reducer: {
-    futureWorkouts: workoutSlice,
+    futureWorkouts: futureWorkoutSlice,
   },
 })
 

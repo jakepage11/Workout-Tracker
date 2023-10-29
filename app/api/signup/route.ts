@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/lib/models/User";
-import connectToDatabase from "@/lib/mongo";
 import prisma from "@/prisma/dbConnection";
 const bcrypt = require("bcrypt");
 

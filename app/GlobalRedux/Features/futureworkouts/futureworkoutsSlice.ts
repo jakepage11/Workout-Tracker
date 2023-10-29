@@ -1,7 +1,7 @@
 'use client'
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { Workout } from '@/types'
+import { Workout } from '@/types/types'
 
 export interface WorkoutState {
   workouts: Workout[]
@@ -11,7 +11,7 @@ const initialState: WorkoutState = {
   workouts: [],
 }
 
-export const workoutSlice = createSlice({
+export const futureWorkoutSlice = createSlice({
   name: 'futureworkouts',
   initialState,
   reducers: {
@@ -22,5 +22,5 @@ export const workoutSlice = createSlice({
   }
 })
 
-export const { setFutureWorkouts } = workoutSlice.actions
-export default workoutSlice.reducer
+export const { setFutureWorkouts } = futureWorkoutSlice.actions
+export default futureWorkoutSlice.reducer

@@ -16,11 +16,6 @@ export default async function CreateWorkoutPage() {
   )
 }
 
-// Returns all exercises to choose in the db
-async function getExercises() {
-  return 
-}
-
 // TODO: Need to figure out how to use prisma within the client component. Either using a 
 // function to pass down or a server component on the inside
 // Adds the given workout to the database
