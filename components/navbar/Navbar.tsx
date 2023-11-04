@@ -24,7 +24,12 @@ export default function NavBar() {
                   className={styles.link}>
                 Create Workout
               </Link>
-              
+            </div>
+            <div className={styles.navBarLink}>
+              <Link href="/log-workout" 
+                  className={styles.link}>
+                Log Workout
+              </Link>
             </div>
             {/* Logout button */}
             <button className={styles.logoutBtn} onClick={() => {console.log("sign out"); signOut()}}>Logout</button>
