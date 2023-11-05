@@ -5,10 +5,12 @@ import { useState, useEffect } from "react"
 import { ExerciseInfo, Workout } from '@/types/types'
 import prisma from '@/prisma/dbConnection'
 import { FitnessCenter, Timer } from '@mui/icons-material'
+import { useRouter } from 'next/navigation'
 
 export default function PastWorkoutCard({workout}: {workout: Workout}) {
   // Grab all unique muscles worked from exInfoList
   const [musclesWorked, setMusclesWorked] = useState(() => {return []})
+  const router = useRouter()
 
   useEffect(() => {
     async function fetchMuscles() {
@@ -35,7 +37,7 @@ export default function PastWorkoutCard({workout}: {workout: Workout}) {
   })
   avgDifficulty /= workout.exercises.length
 
-  let cardStyles = 'bg-[var(--gray)] w-[250px] h-[180px] rounded-lg'
+  let cardStyles = 'bg-[var(--gray)] w-[250px] h-[180px] rounded-lg relative'
   if (workout.completeIn === -1) {
     cardStyles += ' border-4 border-[var(--pink)]'
   }
@@ -56,10 +58,12 @@ export default function PastWorkoutCard({workout}: {workout: Workout}) {
         </div> :
         <div className='flex flex-col items-center cursor-pointer'>
           <h6>Workout wasn't completed</h6>
-          <p><u>Delete Workout</u></p>
         </div>
       }
-
+      <div className='flex justify-center'>
+        <button className='bg-white absolute bottom-2 px-2 py-1 rounded-full'
+          onClick={() => {router.push(`/edit-workout/${workout.id}`)}}>View/Edit</button>
+      </div>
     </div>
   )
 }

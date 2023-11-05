@@ -34,6 +34,9 @@ async function getUpcomingWorkouts(user_email: string) {
         gte: todayDate.toDate(),
         lte: twoWeeksDate.toDate(),
       }
+    },
+    orderBy: {
+      date: 'asc'
     }
   })
   return workouts
@@ -52,6 +55,9 @@ async function getPastWorkouts(user_email: string) {
         lte: todayDate.toDate(),
         gte: twoWeeksAgo.toDate(),
       }
+    },
+    orderBy: {
+      date: 'desc'
     }
   })
   return workouts

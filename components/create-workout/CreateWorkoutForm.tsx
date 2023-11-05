@@ -14,16 +14,20 @@ import { ExerciseInfo } from '@/types/types';
 import SetsDisplay from "./SetsDisplay"
 import { IntegerType } from 'mongodb';
 import { submitWorkout } from '@/app/create-workout/page';
+import WorkoutHeader from './WorkoutHeader';
 const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
 // Workout Form for user to enter information into. Takes in list of exercises, the workout (if
 // we're editing one, will be null otherwise), a function to submit the workout, and the types of workouts.
-export default function CreateWorkoutForm({exercisesInfo}: 
-  {exercisesInfo: Array<ExerciseInfo>}) {
+export default function CreateWorkoutForm({exercisesInfo, isLogging, isEditing, editWorkout}: 
+  {exercisesInfo: Array<ExerciseInfo>, isLogging: boolean, isEditing: boolean, editWorkout?: Workout}) {
   const router = useRouter()
   const {data: session, status} = useSession()
   const [workout, setWorkout] = useState<Workout>(() => {
+    if (editWorkout) {
+      return editWorkout
+    }
     return {
       user: session?.user?.email as string, 
       exercises: [{
@@ -172,6 +176,9 @@ export default function CreateWorkoutForm({exercisesInfo}:
   // TODO: make backend call to calculate the amount of time the workout will take
   return (
     // Entire page container: search, form, set display
+    <div>
+      {/* TODO: change this */}
+      <WorkoutHeader isLog={isLogging} isEdit={isEditing} editOn={true}/>
       <div className={classes.formContainer}>
         <div>
           ExSearch Here
@@ -180,17 +187,8 @@ export default function CreateWorkoutForm({exercisesInfo}:
         {/* Middle Column */}
         <div className='flex flex-col items-center'>
           <div className={classes.middleColumn}>
-            {/* type and date */}
-            <div className="p-2 flex justify-around align-middle w-[100%]">
-              <LocationOn className='text-white cursor-pointer'/>
-              <input className="text-[20px] rounded-md px-2" 
-                        type='datetime-local' 
-                        value={dayjs(workout.date).format('YYYY-MM-DDTHH:mm')}
-                        onChange={(e) => handleFormChanges(e)} />
-              <People className='text-white cursor-pointer'/>
-            </div>
             {/* Exercises along with buttons */}
-            <div className="flex flex-col items-center w-[95%] bg-white h-[87%] rounded-md relative">
+            <div className="flex flex-col items-center w-[95%] mt-4 bg-white h-[95%] rounded-md relative">
                 <h2>Exercises</h2>
                 {/* Container for list of exercises */}
                 <div className={classes.exList}>
@@ -201,11 +199,11 @@ export default function CreateWorkoutForm({exercisesInfo}:
                 </div>
 
                 {/* Create Workout Button*/}
-                <div className={classes.editBtnsContainer}>
+                {!isEditing && <div className={classes.editBtnsContainer}>
                   <button className="text-white w-[200px] rounded-lg py-1" onClick={(e) => submitWorkoutLocal(e)}>
-                    Create Workout
+                    {isLogging ? "Log Workout" : "Create Workout"}
                   </button>
-                </div>
+                </div>}
             </div>
           </div>
         </div>
@@ -216,6 +214,7 @@ export default function CreateWorkoutForm({exercisesInfo}:
           />}
         </div>
       </div>
+    </div>
   );
 }
 

@@ -5,12 +5,15 @@ import mainlogo from "../../public/main_logo.png"
 import titlelogo from "../../public/Long_logo.png"
 import { signOut } from "next-auth/react"
 import ProfileIcon from "./ProfileIcon"
+import { usePathname } from "next/navigation"
 // import AuthContext from "@/stores/authContext"
 // import { useContext } from "react"
 // import ProfileIcon from "./ProfileIcon"
 
 export default function NavBar() {
-
+  const url = usePathname()
+  const pathChosenStyle = styles.link
+  
   return (
     <div className={styles.main}>
       <nav className={styles.navcontainer}>
@@ -20,14 +23,13 @@ export default function NavBar() {
           </Link>
           <div className={styles.linksContainer}>
             <div className={styles.navBarLink}>
-              <Link href="/create-workout" 
-                  className={styles.link}>
+              <Link href="/create-workout" className={pathChosenStyle}>
                 Create Workout
               </Link>
             </div>
             <div className={styles.navBarLink}>
               <Link href="/log-workout" 
-                  className={styles.link}>
+                  className={pathChosenStyle}>
                 Log Workout
               </Link>
             </div>

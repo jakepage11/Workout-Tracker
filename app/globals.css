@@ -9,7 +9,9 @@
   --light-pink: #FFBAB7;
   --gray: #D9D9D9;
   --pink: #FF5C55;
-  --navbar-height: 100px;
+  --yellow: #FFB525;
+  --navbar-height: 80px;
+  --workout-header: 60px;
 }
 
 * {
