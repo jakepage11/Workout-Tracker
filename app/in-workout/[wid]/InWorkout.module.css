@@ -1,0 +1,11 @@
+.background {
+  @apply bg-[var(--blue)] min-h-[calc(100vh-var(--navbar-height))] flex flex-col items-center;
+}
+
+.content {
+  @apply min-w-[350px] flex flex-col items-center bg-orange-400 min-h-[calc(100vh-var(--navbar-height))] relative text-center;
+}
+
+.btn {
+  @apply absolute bottom-3 bg-white w-[90%] py-1 rounded-md;
+}

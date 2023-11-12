@@ -24,7 +24,7 @@ export default async function DashboardPage() {
 async function getUpcomingWorkouts(user_email: string) {
   const url = process.env.NODE_ENV === "development" ? process.env.DEV_URL : process.env.PROD_URL
   // Set date range from today until 2 weeks into the future
-  const todayDate = dayjs()
+  const todayDate = dayjs().startOf('day')
   const twoWeeksDate = todayDate.add(2, 'week')
   // Grab all upcoming workouts
   const workouts = await prisma.workouts.findMany({
@@ -39,6 +39,7 @@ async function getUpcomingWorkouts(user_email: string) {
       date: 'asc'
     }
   })
+  console.log({workouts})
   return workouts
 }
 
