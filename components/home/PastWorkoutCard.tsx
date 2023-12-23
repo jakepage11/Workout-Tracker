@@ -14,7 +14,6 @@ export default function PastWorkoutCard({workout}: {workout: Workout}) {
 
   useEffect(() => {
     async function fetchMuscles() {
-      console.log(workout.id)
       const muscles = await fetch(`/api/workoutMuscles?wid=${workout.id?.toString()}`, {
         method: 'GET',
         headers: {

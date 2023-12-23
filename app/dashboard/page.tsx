@@ -29,17 +29,16 @@ async function getUpcomingWorkouts(user_email: string) {
   // Grab all upcoming workouts
   const workouts = await prisma.workouts.findMany({
     where: {
-      user: user_email,
-      date: {
+      user_id: user_email,
+      start_time: {
         gte: todayDate.toDate(),
         lte: twoWeeksDate.toDate(),
       }
     },
     orderBy: {
-      date: 'asc'
+      start_time: 'asc'
     }
   })
-  console.log({workouts})
   return workouts
 }
 
@@ -51,14 +50,14 @@ async function getPastWorkouts(user_email: string) {
   // Grab all upcoming workouts
   const workouts = await prisma.workouts.findMany({
     where: {
-      user: user_email,
-      date: {
+      user_id: user_email,
+      start_time: {
         lte: todayDate.toDate(),
         gte: twoWeeksAgo.toDate(),
       }
     },
     orderBy: {
-      date: 'desc'
+      start_time: 'desc'
     }
   })
   return workouts

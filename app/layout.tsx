@@ -8,7 +8,6 @@ import { Provider } from "react-redux"
 
 export default async function RootLayout({children}: {children: React.ReactNode}) {
  const session = await getServerSession(options)
- console.log({session})
   return (
     <html lang="en">
       <body>

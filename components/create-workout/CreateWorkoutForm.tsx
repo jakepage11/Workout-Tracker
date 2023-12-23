@@ -51,7 +51,6 @@ export default function CreateWorkoutForm({exercisesInfo, isLogging, isEditing, 
   // Get previous values that user had in form before the page refreshed.
   useEffect(() => {
     const cachedWorkout = window.sessionStorage.getItem("workoutData");
-    console.log(cachedWorkout)
     if (cachedWorkout) {
       let newWorkout = JSON.parse(cachedWorkout);
       // Set if we've previously assigned a value
@@ -66,7 +65,6 @@ export default function CreateWorkoutForm({exercisesInfo, isLogging, isEditing, 
 
   // Update the local storage each time state changes
   useEffect(() => {
-    console.log("workout changed")
     if (!initialLoad) {
       window.sessionStorage.setItem("workoutData", JSON.stringify(workout));
     }
@@ -82,7 +80,6 @@ export default function CreateWorkoutForm({exercisesInfo, isLogging, isEditing, 
   }
   // Adds an exercise to the current workout plan
   function addExercise(exname: string) {
-    console.log("adding exercise")
     // Upon up the Create Set Screen
     setCreateSetIndex(workout.exercises.length);
     setShowCreateSet(true);
@@ -145,7 +142,6 @@ export default function CreateWorkoutForm({exercisesInfo, isLogging, isEditing, 
 
    // Deletes the exercise with the given id
    function deleteExercise(id: string) {
-    console.log("delete")
     // Close Set Display is open close it
     setCreateSetIndex(-1)
     setShowCreateSet(false)

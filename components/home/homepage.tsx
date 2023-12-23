@@ -4,10 +4,12 @@ import styles from "./homepage.module.css"
 import WorkoutCard from "./WorkoutCard"
 import PastWorkoutCard from "./PastWorkoutCard"
 import { nanoid } from "nanoid"
+import { useRouter } from "next/navigation"
 
 // TODO: Remove all the extra checks for user and authready
 export default function UserHomePage({futureWorkouts, pastWorkouts}: 
     {futureWorkouts: Workout[], pastWorkouts: Workout[]}) {
+  const router = useRouter()
   // Set the Redux Global state for these workouts
 
   // TODO: Set up storing of global variables
@@ -17,12 +19,15 @@ export default function UserHomePage({futureWorkouts, pastWorkouts}:
     return <WorkoutCard key={nanoid()} workout={workout}/>
   })
   const pastCards = pastWorkouts.map((workout) => {
-    console.log({workout})
     return <PastWorkoutCard key={nanoid()} workout={workout}/>
   })
 
   return (
     <div>
+      <div className="flex gap-10 justify-center">
+        <button onClick={() => router.push("/start-workout")} className="bg-[var(--gray)]">New Workout</button>
+        <button className="bg-[var(--gray)]">New from Template</button>
+      </div>
       <h2>Upcoming Workouts</h2>
       <div>
         {futureCards}

@@ -58,13 +58,11 @@ export const options:NextAuthOptions = {
   callbacks: {
     async session({session, token}) {
       // Add user to the session along with the access token
-      console.log("Session token: ", token)
       const sessionUser = await prisma.users.findFirst({where: {email: session?.user?.email as string}})
       const sessionWithId = {...session, user: {...session.user, id: sessionUser?.id, token}}
       return sessionWithId
     },
     async jwt({token, account, user, session}) {
-      console.log("jwt: ", {token, user, session, account})
       let access_token
       // If the provider is Google use the access token given by them
       if (account?.provider === "google") {
@@ -83,10 +81,12 @@ export const options:NextAuthOptions = {
         // Create new user in database if one doesn't already exist
         const userExists = await prisma.users.findFirst({where: {email: profile?.email}})
         if (!userExists && account?.provider === "google") {
-          console.log("creating new user")
           await prisma.users.create({
             data: {name: profile?.name as string, email: profile?.email as string, 
                   image: profile?.image as string, createdAt: new Date(), updatedAt: new Date() }
+          })
+          await prisma.user_templates.create({
+            data: {user: profile?.name as string, templates: []}
           })
         }
         return true

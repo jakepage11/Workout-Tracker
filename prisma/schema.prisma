@@ -22,11 +22,11 @@ model users {
 
 model workouts {
   id String @id @default(auto()) @map("_id") @db.ObjectId
-  user String @unique
+  user_id String
   exercises Exercise[]
-  date DateTime
-  type String
-  completeIn Int
+  start_time DateTime
+  end_time DateTime
+  curr_ex Int
 }
 
 type Exercise {
@@ -42,12 +42,21 @@ model exercises {
   name String @unique
   muscles String[]
   tags String[]
-  level String
-  link String
   equipment String[]
-  popularity Float
-  people_req Int
-  description String
+  creator_uid String
+}
+
+model templates {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  user_id String @unique
+  name String
+  exercises Exercise[]
+}
+
+model invites {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  user_id String
+  workouts_uids String[]
 }
 
 // model Account {

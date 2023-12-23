@@ -6,9 +6,6 @@ import { ObjectId } from "mongodb";
 // Registers users that used the credentials provider
 export async function GET(request: NextRequest, response: NextResponse) {
   const server = await getServerSession()
-  console.log({server})
-
-
   // Parse Url for the id of the workout
   const url = new URL(request.url)
   if (url.searchParams.get('wid')) { 

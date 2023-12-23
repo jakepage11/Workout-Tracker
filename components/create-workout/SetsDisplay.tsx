@@ -22,7 +22,6 @@ export default function ExSetDisplay({ex, index, handleClose, handleUpdate, allE
   // Handles setting values for the given exercise and/or set number
   function handleExChanges(e: ChangeEvent<HTMLInputElement>, setindex: number = -1, name: string = "") {
     const exCopy: Exercise = JSON.parse(JSON.stringify(ex))
-    console.log(name)
     if (name !== "") { // update name
       exCopy.name = name
     } else {

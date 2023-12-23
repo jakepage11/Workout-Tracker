@@ -15,7 +15,6 @@ export default function SignupPage() {
   const router = useRouter()
   // Signs up user with the current form info
   const signup = async() => {
-    console.log("sign up")
     const res = await fetch("/api/signup", {
       method: 'POST',
       headers: {

@@ -2,40 +2,27 @@ import { IntegerType, ObjectId } from "mongodb"
 
 export type Workout = {
   id?: string,
-  user: string,
+  user_id: string,
   exercises: Array<Exercise>,
-  date: Date,
-  completeIn: number,
+  start_time: Date,
+  end_time: Date,
+  curr_ex: Number
 }
 
 export type Exercise = {
   id: string 
   name: string
   reps: Array<number>
-  load: Array<number>
+  weight: Array<number>
+  setComplete: Array<boolean>
   difficulty: number
 }
 
 export type ExerciseInfo = {
   id: string,
+  creator_uid: string,
   name: string,
   muscles: Array<String>
   tags: Array<String>
-  level: string
-  link: string
   equipment: Array<String>
-  popularity: number
-  people_req: number
-  description: string
-}
-
-export type WorkoutStarted = {
-    _id: ObjectId,
-    user: string,
-    exercises: Array<Object>,
-    difficulty: number,
-    date: Date,
-    completeIn: number,
-    progress: number,
-    startTime: Date,
 }

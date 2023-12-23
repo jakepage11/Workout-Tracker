@@ -16,7 +16,6 @@ export const futureWorkoutSlice = createSlice({
   initialState,
   reducers: {
     setFutureWorkouts: (state, action: PayloadAction<Workout[]>) => {
-      console.log(action.payload)
       state.workouts = action.payload
     },
   }
